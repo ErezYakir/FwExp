@@ -25,9 +25,10 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="Added Analyzer Module with first basic analysis (get address object of ip)">
+    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="Changed the way IP range is saved in DB. now should be faster">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/analyzer/analyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analyzer/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/analyzer/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bkp.tmp" beforeDir="false" afterPath="$PROJECT_DIR$/bkp.tmp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example.db" beforeDir="false" afterPath="$PROJECT_DIR$/example.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/firewall/firewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/firewall.py" afterDir="false" />
@@ -139,7 +140,21 @@
       <option name="project" value="LOCAL" />
       <updated>1588595010002</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Changed the way IP range is saved in DB. now should be faster">
+      <created>1588598054504</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1588598054504</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Changed the way IP range is saved in DB. now should be faster">
+      <created>1588598073161</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1588598073161</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -171,53 +186,58 @@
     <MESSAGE value="First Stable Version for master branch. Can parse fortigate backup file into Simple SQLite table with 5 columns." />
     <MESSAGE value="Added Creation and parsing of addresses, addressGroups tables" />
     <MESSAGE value="Added Analyzer Module with first basic analysis (get address object of ip)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Analyzer Module with first basic analysis (get address object of ip)" />
+    <MESSAGE value="Changed the way IP range is saved in DB. now should be faster" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed the way IP range is saved in DB. now should be faster" />
   </component>
   <component name="WindowStateProjectService">
     <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1588579559109">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1160@0.0.1920.1160" timestamp="1588579559109" />
-    <state width="1899" height="321" key="GridCell.Tab.0.bottom" timestamp="1588597726308">
+    <state width="1899" height="396" key="GridCell.Tab.0.bottom" timestamp="1588599120973">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="321" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1588597726308" />
-    <state width="1899" height="321" key="GridCell.Tab.0.center" timestamp="1588597726308">
+    <state width="1899" height="396" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1588599120973" />
+    <state width="1899" height="396" key="GridCell.Tab.0.center" timestamp="1588599120973">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="321" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1588597726308" />
-    <state width="1899" height="321" key="GridCell.Tab.0.left" timestamp="1588597726308">
+    <state width="1899" height="396" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1588599120973" />
+    <state width="1899" height="396" key="GridCell.Tab.0.left" timestamp="1588599120973">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="321" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1588597726308" />
-    <state width="1899" height="321" key="GridCell.Tab.0.right" timestamp="1588597726308">
+    <state width="1899" height="396" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1588599120973" />
+    <state width="1899" height="396" key="GridCell.Tab.0.right" timestamp="1588599120973">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="321" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1588597726308" />
-    <state width="1899" height="396" key="GridCell.Tab.1.bottom" timestamp="1588597634647">
+    <state width="1899" height="396" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1588599120973" />
+    <state width="1899" height="396" key="GridCell.Tab.1.bottom" timestamp="1588599124004">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.1.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1588597634647" />
-    <state width="1899" height="396" key="GridCell.Tab.1.center" timestamp="1588597634647">
+    <state width="1899" height="396" key="GridCell.Tab.1.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1588599124004" />
+    <state width="1899" height="396" key="GridCell.Tab.1.center" timestamp="1588599124004">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.1.center/0.0.1920.1160@0.0.1920.1160" timestamp="1588597634647" />
-    <state width="1899" height="396" key="GridCell.Tab.1.left" timestamp="1588597634647">
+    <state width="1899" height="396" key="GridCell.Tab.1.center/0.0.1920.1160@0.0.1920.1160" timestamp="1588599124004" />
+    <state width="1899" height="396" key="GridCell.Tab.1.left" timestamp="1588599124004">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.1.left/0.0.1920.1160@0.0.1920.1160" timestamp="1588597634647" />
-    <state width="1899" height="396" key="GridCell.Tab.1.right" timestamp="1588597634647">
+    <state width="1899" height="396" key="GridCell.Tab.1.left/0.0.1920.1160@0.0.1920.1160" timestamp="1588599124004" />
+    <state width="1899" height="396" key="GridCell.Tab.1.right" timestamp="1588599124004">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.1.right/0.0.1920.1160@0.0.1920.1160" timestamp="1588597634647" />
+    <state width="1899" height="396" key="GridCell.Tab.1.right/0.0.1920.1160@0.0.1920.1160" timestamp="1588599124004" />
     <state x="681" y="321" width="540" height="524" key="StructurePopup" timestamp="1588582033039">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="681" y="321" width="540" height="524" key="StructurePopup/0.0.1920.1160@0.0.1920.1160" timestamp="1588582033039" />
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1588595021629">
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1588598084721">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1588595021629" />
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1588598084721" />
+    <state width="968" height="588" key="XDebugger.FullValuePopup" timestamp="1588598555078">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state width="968" height="588" key="XDebugger.FullValuePopup/0.0.1920.1160@0.0.1920.1160" timestamp="1588598555078" />
     <state x="623" y="255" width="672" height="678" key="search.everywhere.popup" timestamp="1588583809836">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -235,6 +255,11 @@
           <url>file://$PROJECT_DIR$/main.py</url>
           <line>9</line>
           <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/firewall/fortigatefirewall.py</url>
+          <line>25</line>
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

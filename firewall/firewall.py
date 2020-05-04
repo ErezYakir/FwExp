@@ -64,9 +64,10 @@ class Firewall(object):
         self.cursor.execute('''DROP TABLE IF EXISTS addresses''')
         self.cursor.execute('''DROP TABLE IF EXISTS addressGroups''')
         self.cursor.execute('''CREATE TABLE policy
-                             (name text, src text, dst text, services text, action INTEGER)''')
+                             (id INTEGER, name TEXT, uuid TEXT, srcintf TEXT, dstintf TEXT, srcaddr TEXT,
+                              dstaddr TEXT, services TEXT, priority INTEGER, action INTEGER, is_enabled INTEGER)''')
         self.cursor.execute('''CREATE TABLE addresses
-                                     (name text, type text, fqdn text, min_addr INTEGER, max_addr INTEGER,
-                                      interface text)''')
+                                     (name TEXT, type TEXT, fqdn TEXT, min_addr INTEGER, max_addr INTEGER,
+                                      interface TEXT)''')
         self.cursor.execute('''CREATE TABLE addressGroups
-                                             (name text, details text)''')
+                                             (name TEXT, details TEXT)''')

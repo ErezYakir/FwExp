@@ -23,16 +23,18 @@ class FortigateFirewall(Firewall):
     def parseToDb(self):
         super().parseToDb()
         results, keys = self._parse_policy()
+        priority = 0
         for res in results:
+            priority += 1
+            # insert to table: id, name, uuid, srcintf, dstintf, srcaddr, dstaddr, services, action, is_enabled
             self.cursor.execute(
-                "INSERT INTO policy VALUES ('{}','{}','{}','{}', {})".format(res['name'], res['srcaddr'],
-                                                                             res['dstaddr'], res['service'],
-                                                                             int(res.get('action',
-                                                                                         'deny') == 'accept')))
+                "INSERT INTO policy VALUES ({},'{}','{}','{}','{}','{}','{}','{}',{},{},{})".format(
+                    res['id'], res['name'], res['uuid'], res['srcintf'], res['dstintf'], res['srcaddr'], res['dstaddr'],
+                    res['service'],priority,int(res.get('action','deny') == 'accept'), 1))
         results, keys = self._parse_addresses()
         for res in results:
             addr_type, fqdn, min_ip, max_ip = self._get_addr_details(res)
-            # intert to table: name, type, fqdn, ip_min, ip_max, interface
+            # insert to table: name, type, fqdn, ip_min, ip_max, interface
             self.cursor.execute(
                 "INSERT INTO addresses VALUES ('{}', '{}', '{}', {}, {}, '{}')".format(res['name'], addr_type,
                                                                                        fqdn, min_ip, max_ip,

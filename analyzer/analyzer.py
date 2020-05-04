@@ -1,7 +1,5 @@
 import sqlite3
-from firewall.firewall import AddressType
 from analyzer import utils
-import ipaddress
 
 class analyzer(object):
     def __init__(self, db_path):
@@ -22,7 +20,7 @@ class analyzer(object):
         return self.cursor.execute('SELECT name FROM addresses WHERE type="FQDN" AND fqdn={}'.format(fqdn)).fetchall()
 
     def _get_address_name_of_ip(self, ip):
-        ip_val = int(ipaddress.IPv4Address(ip))
+        ip_val = utils.ipv4_to_int(ip)
         return self.cursor.execute('SELECT name FROM addresses WHERE type="IP_RANGE" AND min_addr<={0}'
                                    ' AND max_addr>={0}'.format(ip_val)).fetchall()
 

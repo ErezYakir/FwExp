@@ -10,3 +10,6 @@ def check_ipv4_in_range(ip, min, max):
 
 def check_ipv4_in_subnet(ip, network, mask):
     return ipaddress.IPv4Address(ip) in ipaddress.IPv4Network('{}/{}'.format(network, mask))
+
+def ipv4_to_int(ip):
+    return int(ipaddress.IPv4Address(ip))
