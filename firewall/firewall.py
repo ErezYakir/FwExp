@@ -1,10 +1,16 @@
-from enum import Enum
+from enum import IntEnum
 import sqlite3
 
-class Vendor(Enum):
+class Vendor(IntEnum):
     CHECKPOINT = 1
     FORTIGATE = 2
     PALOALTO = 3
+
+class AddressType(IntEnum):
+    FQDN = 4
+    IP_RANGE = 5
+    SUBNET = 6
+    DYNAMIC = 7
 
 class Firewall(object):
     """
@@ -57,5 +63,11 @@ class Firewall(object):
         :return:
         """
         self.cursor.execute('''DROP TABLE IF EXISTS policy''')
+        self.cursor.execute('''DROP TABLE IF EXISTS addresses''')
+        self.cursor.execute('''DROP TABLE IF EXISTS addressGroups''')
         self.cursor.execute('''CREATE TABLE policy
                              (name text, src text, dst text, services text, action INTEGER)''')
+        self.cursor.execute('''CREATE TABLE addresses
+                                     (name text, type INTEGER, details text, interface text)''')
+        self.cursor.execute('''CREATE TABLE addressGroups
+                                             (name text, details text)''')
