@@ -2,6 +2,8 @@ import urllib.request
 import ssl
 import requests
 import re
+from .firewall import Firewall
+
 
 class FortigateFirewall(Firewall):
     def __init__(self, ip, user, pwd):
@@ -17,7 +19,6 @@ class FortigateFirewall(Firewall):
         # -- Policy setting
         self.p_policy_set = re.compile('^\s*set\s+(?P<policy_key>\S+)\s+(?P<policy_value>.*)$', re.IGNORECASE)
 
-
     def fetch(self):
         ses = requests.Session()
         fetch_url = 'https://{}/api/v2/monitor/system/config/backup?destination=file&scope=global'.format(self.ip)
@@ -28,10 +29,15 @@ class FortigateFirewall(Firewall):
         with open("bkp.tmp", 'w') as f:
             f.write(ses.get(fetch_url, verify=False).text)
 
-    def convertToJson(self):
+    def parseToDb(self):
+        super().parseToDb()
         results, keys = self._parse()
-        print(results)
-        print(keys)
+        for res in results:
+            self.cursor.execute(
+                "INSERT INTO policy VALUES ('{}','{}','{}','{}', {})".format(res['name'], res['srcaddr'],
+                                                                             res['dstaddr'], res['service'],
+                                                                             int(res['action'] == 'accept')))
+
 
     def _parse(self):
         in_policy_block = False

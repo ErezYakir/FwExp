@@ -1,8 +1,9 @@
 from firewall import fortigatefirewall
 
 try:
-    f = FortigateFirewall("13.77.200.222", "yakir", "Aa123456123456")
+    f = fortigatefirewall.FortigateFirewall("52.161.101.23", "yakir", "Aa123456123456")
     f.fetch()
-    f.convertToJson()
+    f.parseToDb()
+    #del f
 except  Exception as e:
     print(e)

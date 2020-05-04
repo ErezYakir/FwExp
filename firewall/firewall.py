@@ -38,10 +38,10 @@ class Firewall(object):
         self.pwd = pwd
         self.conn = sqlite3.connect('example.db')
         self.cursor = self.conn.cursor()
-        c.execute('''CREATE TABLE policy
-                     (date name, srcip text, symbol text, qty real, price real)''')
+
 
     def __del__(self):
+        self.conn.commit()
         self.conn.close()
 
     def fetch(self):
@@ -51,9 +51,11 @@ class Firewall(object):
         """
         raise NotImplementedError()
 
-    def convertToJson(self):
+    def parseToDb(self):
         """
         Reads temp\bkp.tmp and converts to json file, write to out.json
         :return:
         """
-        raise NotImplementedError()
+        self.cursor.execute('''DROP TABLE IF EXISTS policy''')
+        self.cursor.execute('''CREATE TABLE policy
+                             (name text, src text, dst text, services text, action INTEGER)''')
