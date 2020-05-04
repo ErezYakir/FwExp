@@ -3,12 +3,12 @@ import ssl
 import requests
 import re
 from .firewall import Firewall, AddressType
+import ipaddress
 
 
 class FortigateFirewall(Firewall):
     def __init__(self, ip, user, pwd):
         super().__init__(ip, user, pwd)
-
 
     def fetch(self):
         ses = requests.Session()
@@ -27,14 +27,16 @@ class FortigateFirewall(Firewall):
             self.cursor.execute(
                 "INSERT INTO policy VALUES ('{}','{}','{}','{}', {})".format(res['name'], res['srcaddr'],
                                                                              res['dstaddr'], res['service'],
-                                                                             int(res.get('action', 'deny') == 'accept')))
+                                                                             int(res.get('action',
+                                                                                         'deny') == 'accept')))
         results, keys = self._parse_addresses()
         for res in results:
-            addr_type = self._str_to_address_type(res.get('type'))
-            addr_details = self._get_addr_details(res, addr_type)
+            addr_type, fqdn, min_ip, max_ip = self._get_addr_details(res)
+            # intert to table: name, type, fqdn, ip_min, ip_max, interface
             self.cursor.execute(
-                "INSERT INTO addresses VALUES ('{}', {}, '{}', '{}')".format(res['name'], int(addr_type),
-                                                                             addr_details, res.get('associated-interface', '')))
+                "INSERT INTO addresses VALUES ('{}', '{}', '{}', {}, {}, '{}')".format(res['name'], addr_type,
+                                                                                       fqdn, min_ip, max_ip,
+                                                                                       res.get('associated-interface','')))
 
         results, keys = self._parse_groups()
         for res in results:
@@ -210,22 +212,19 @@ class FortigateFirewall(Firewall):
 
         return (group_list, order_keys)
 
-    def _str_to_address_type(self, str):
-        if str == 'iprange':
-            return AddressType.IP_RANGE
-        elif str == 'fqdn':
-            return AddressType.FQDN
-        elif str == 'dynamic':
-            return AddressType.DYNAMIC
+    def _get_addr_details(self, values):
+        addr_type, fqdn, min_ip, max_ip = '', '', '', ''
+        type = values.get('type')
+        if type == 'fqdn':
+            return ('FQDN', values.get('fqdn', ''), 0, 0)
+        if type == 'iprange':
+            ip_min = int(ipaddress.IPv4Address(values.get('start-ip')))
+            ip_max = int(ipaddress.IPv4Address(values.get('end-ip')))
+            return ('IP_RANGE', '', ip_min, ip_max)
+        if type == 'dynamic':
+            return ('NOT IMPLEMENTED', '', 0, 0)  # TODO: understand what is Address-Type of Dynamic and treat accordingly
+        # if type is Null then it is type of subnet
         else:
-            return AddressType.SUBNET
-
-    def _get_addr_details(self, values, type):
-        if type == AddressType.FQDN:
-            return values['fqdn']
-        if type == AddressType.DYNAMIC:
-            return '' # TODO: understand what is Address-Type of Dynamic and treat accordingly
-        if type == AddressType.IP_RANGE:
-            return '{} {}'.format(values['start-ip'], values['end-ip'])
-        if type == AddressType.SUBNET:
-            return values.get('subnet', '0.0.0.0 0.0.0.0')
+            network, mask = values.get('subnet', '0.0.0.0 0.0.0.0').split(' ')
+            ip_addresses_range = ipaddress.IPv4Network('{}/{}'.format(network,mask))
+            return ('IP_RANGE', '', int(ip_addresses_range[0]), int(ip_addresses_range[-1]))

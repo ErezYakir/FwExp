@@ -25,15 +25,13 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="Added Creation and parsing of addresses, addressGroups tables">
-      <change afterPath="$PROJECT_DIR$/analyzer/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/analyzer/analyzer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/analyzer/utils.py" afterDir="false" />
+    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="Added Analyzer Module with first basic analysis (get address object of ip)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/analyzer/analyzer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bkp.tmp" beforeDir="false" afterPath="$PROJECT_DIR$/bkp.tmp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example.db" beforeDir="false" afterPath="$PROJECT_DIR$/example.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/firewall/firewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/firewall.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/firewall/fortigatefirewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/fortigatefirewall.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,7 +132,14 @@
       <option name="project" value="LOCAL" />
       <updated>1588585186392</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Added Analyzer Module with first basic analysis (get address object of ip)">
+      <created>1588595010002</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1588595010002</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -165,53 +170,54 @@
     <MESSAGE value="Refactoring of Files and dirs to a python module" />
     <MESSAGE value="First Stable Version for master branch. Can parse fortigate backup file into Simple SQLite table with 5 columns." />
     <MESSAGE value="Added Creation and parsing of addresses, addressGroups tables" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Creation and parsing of addresses, addressGroups tables" />
+    <MESSAGE value="Added Analyzer Module with first basic analysis (get address object of ip)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Analyzer Module with first basic analysis (get address object of ip)" />
   </component>
   <component name="WindowStateProjectService">
     <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1588579559109">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1160@0.0.1920.1160" timestamp="1588579559109" />
-    <state width="1899" height="396" key="GridCell.Tab.0.bottom" timestamp="1588593672416">
+    <state width="1899" height="321" key="GridCell.Tab.0.bottom" timestamp="1588597726308">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1588593672416" />
-    <state width="1899" height="396" key="GridCell.Tab.0.center" timestamp="1588593672416">
+    <state width="1899" height="321" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1588597726308" />
+    <state width="1899" height="321" key="GridCell.Tab.0.center" timestamp="1588597726308">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1588593672416" />
-    <state width="1899" height="396" key="GridCell.Tab.0.left" timestamp="1588593672416">
+    <state width="1899" height="321" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1588597726308" />
+    <state width="1899" height="321" key="GridCell.Tab.0.left" timestamp="1588597726308">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1588593672416" />
-    <state width="1899" height="396" key="GridCell.Tab.0.right" timestamp="1588593672416">
+    <state width="1899" height="321" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1588597726308" />
+    <state width="1899" height="321" key="GridCell.Tab.0.right" timestamp="1588597726308">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1588593672416" />
-    <state width="1899" height="396" key="GridCell.Tab.1.bottom" timestamp="1588593672368">
+    <state width="1899" height="321" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1588597726308" />
+    <state width="1899" height="396" key="GridCell.Tab.1.bottom" timestamp="1588597634647">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.1.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1588593672368" />
-    <state width="1899" height="396" key="GridCell.Tab.1.center" timestamp="1588593672368">
+    <state width="1899" height="396" key="GridCell.Tab.1.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1588597634647" />
+    <state width="1899" height="396" key="GridCell.Tab.1.center" timestamp="1588597634647">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.1.center/0.0.1920.1160@0.0.1920.1160" timestamp="1588593672368" />
-    <state width="1899" height="396" key="GridCell.Tab.1.left" timestamp="1588593672368">
+    <state width="1899" height="396" key="GridCell.Tab.1.center/0.0.1920.1160@0.0.1920.1160" timestamp="1588597634647" />
+    <state width="1899" height="396" key="GridCell.Tab.1.left" timestamp="1588597634647">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.1.left/0.0.1920.1160@0.0.1920.1160" timestamp="1588593672368" />
-    <state width="1899" height="396" key="GridCell.Tab.1.right" timestamp="1588593672368">
+    <state width="1899" height="396" key="GridCell.Tab.1.left/0.0.1920.1160@0.0.1920.1160" timestamp="1588597634647" />
+    <state width="1899" height="396" key="GridCell.Tab.1.right" timestamp="1588597634647">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="396" key="GridCell.Tab.1.right/0.0.1920.1160@0.0.1920.1160" timestamp="1588593672368" />
+    <state width="1899" height="396" key="GridCell.Tab.1.right/0.0.1920.1160@0.0.1920.1160" timestamp="1588597634647" />
     <state x="681" y="321" width="540" height="524" key="StructurePopup" timestamp="1588582033039">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="681" y="321" width="540" height="524" key="StructurePopup/0.0.1920.1160@0.0.1920.1160" timestamp="1588582033039" />
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1588585211716">
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1588595021629">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1588585211716" />
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1588595021629" />
     <state x="623" y="255" width="672" height="678" key="search.everywhere.popup" timestamp="1588583809836">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -222,7 +228,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/firewall/fortigatefirewall.py</url>
-          <line>102</line>
+          <line>104</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

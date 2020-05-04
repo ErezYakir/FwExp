@@ -1,16 +1,14 @@
-from enum import IntEnum
+from enum import Enum
 import sqlite3
 
-class Vendor(IntEnum):
+class Vendor(Enum):
     CHECKPOINT = 1
     FORTIGATE = 2
     PALOALTO = 3
 
-class AddressType(IntEnum):
-    FQDN = 4
-    IP_RANGE = 5
-    SUBNET = 6
-    DYNAMIC = 7
+class AddressType(Enum):
+    FQDN = 'FQDN'
+    IP_RANGE = 'IP_RANGE'
 
 class Firewall(object):
     """
@@ -68,6 +66,7 @@ class Firewall(object):
         self.cursor.execute('''CREATE TABLE policy
                              (name text, src text, dst text, services text, action INTEGER)''')
         self.cursor.execute('''CREATE TABLE addresses
-                                     (name text, type INTEGER, details text, interface text)''')
+                                     (name text, type text, fqdn text, min_addr INTEGER, max_addr INTEGER,
+                                      interface text)''')
         self.cursor.execute('''CREATE TABLE addressGroups
                                              (name text, details text)''')
