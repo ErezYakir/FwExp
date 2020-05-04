@@ -1,52 +1,32 @@
-import urllib.request
-import ssl
 import requests
 import re
-from .firewall import Firewall, AddressType
+from .firewall import Firewall
 import ipaddress
+import json
 
 
-class FortigateFirewall(Firewall):
+class CheckpointFirewall(Firewall):
     def __init__(self, ip, user, pwd):
         super().__init__(ip, user, pwd)
+        with open('checkpoint_config_files/Standard_objects.json', 'r') as f:
+            self.checkpoint_objects = json.loads(f.read())
+        with open('checkpoint_config_files/Network-Management server.json', 'r') as f:
+            self.checkpoint_rules = json.loads(f.read())
 
     def fetch(self):
-        ses = requests.Session()
-        fetch_url = 'https://{}/api/v2/monitor/system/config/backup?destination=file&scope=global'.format(self.ip)
-        login_url = 'https://{}/logincheck'.format(self.ip)
-        # Login
-        ses.post(url=login_url, data={'ajax': '1', 'username': self.user, 'secretkey': self.pwd}, verify=False)
-        # Download file locally
-        with open("bkp.tmp", 'w') as f:
-            f.write(ses.get(fetch_url, verify=False).text)
+        # TODO: fetch from http / ssh
+        pass
 
     def parseToDb(self):
         super().parseToDb()
-        results, keys = self._parse_policy()
-        priority = 0
+        results = self._parse_policy()
+        # insert to table: id, name, uuid, srcintf, dstintf, srcaddr, dstaddr, services, priority, action, is_enabled
         for res in results:
-            priority += 1
-            # insert to table: id, name, uuid, srcintf, dstintf, srcaddr, dstaddr, services, priority, action, is_enabled
             self.cursor.execute(
                 "INSERT INTO policy VALUES ('{}','{}','{}','{}','{}','{}','{}',{},{},{})".format(
-                    res['name'], res['uuid'], res['srcintf'], res['dstintf'], res['srcaddr'], res['dstaddr'],
-                    res['service'],priority,int(res.get('action','deny') == 'accept'), 1))
-
-        results, keys = self._parse_addresses()
-        for res in results:
-            addr_type, fqdn, min_ip, max_ip = self._get_addr_details(res)
-            # insert to table: name, type, fqdn, ip_min, ip_max, interface
-            self.cursor.execute(
-                "INSERT INTO addresses VALUES ('{}', '{}', '{}', {}, {}, '{}')".format(res['name'], addr_type,
-                                                                                       fqdn, min_ip, max_ip,
-                                                                                       res.get('associated-interface','')))
-        results, keys = self._parse_groups()
-        for res in results:
-            self.cursor.execute(
-                "INSERT INTO addressGroups VALUES ('{}', '{}')".format(res['name'], res['member'])
-            )
-
-        self.conn.commit()
+                    res['name'], res['uuid'], ','.join(res['srcintf']), ','.join(res['dstintf']),
+                    ','.join(res['srcaddr']), ','.join(res['dstaddr']), ','.join(res['service']), res['priority'],
+                    int(res['action']), int(res['enabled'])))
 
     def _parse_addresses(self):
         p_entering_address_block = re.compile('^\s*config firewall address$', re.IGNORECASE)
@@ -105,59 +85,36 @@ class FortigateFirewall(Firewall):
         return (address_list, order_keys)
 
     def _parse_policy(self):
-        # -- Entering policy definition block
-        p_entering_policy_block = re.compile('^\s*config firewall policy$', re.IGNORECASE)
-        # -- Exiting policy definition block
-        p_exiting_policy_block = re.compile('^end$', re.IGNORECASE)
-        # -- Commiting the current policy definition and going to the next one
-        p_policy_next = re.compile('^next$', re.IGNORECASE)
-        # -- Policy number
-        p_policy_number = re.compile('^\s*edit\s+(?P<policy_number>\d+)', re.IGNORECASE)
-        # -- Policy setting
-        p_policy_set = re.compile('^\s*set\s+(?P<policy_key>\S+)\s+(?P<policy_value>.*)$', re.IGNORECASE)
-
-        in_policy_block = False
-
         policy_list = []
         policy_elem = {}
 
-        order_keys = []
+        for item in self.checkpoint_rules:
+            policy_elem['name'] = item['name']
+            policy_elem['uuid'] = item['uid']
+            policy_elem['srcintf'] = []
+            policy_elem['dstintf'] = []
+            policy_elem['srcaddr'] = []
+            policy_elem['dstaddr'] = []
+            policy_elem['service'] = []
+            for src_uid in item['source']:
+                policy_elem['srcintf'] += self._get_obj_by_uid(src_uid).get('interfaces', []) # TODO: probably interface is uuid and need to fetch its name
+                policy_elem['srcaddr'].append(self._get_obj_by_uid(src_uid).get('name'))
+            for dst_uid in item['destination']:
+                policy_elem['dstintf'] += self._get_obj_by_uid(dst_uid).get('interfaces', [])
+                policy_elem['dstaddr'].append(self._get_obj_by_uid(dst_uid)['name'])
+            for srv_uid in item['service']:
+                policy_elem['service'].append(self._get_obj_by_uid(srv_uid)['name'])
+            policy_elem['priority'] = item['rule-number']
+            policy_elem['action'] = self._get_obj_by_uid(item['action'])['name'] == "Accept"
+            policy_elem['enabled'] = item['enabled']
+            policy_list.append(policy_elem)
+            policy_elem = {}
 
-        with open("bkp.tmp", 'r') as fd_input:
-            for line in fd_input:
-                line = line.lstrip().rstrip().strip()
+        return policy_list
 
-                # We match a policy block
-                if p_entering_policy_block.search(line):
-                    in_policy_block = True
-
-                # We are in a policy block
-                if in_policy_block:
-                    if p_policy_number.search(line):
-                        policy_number = p_policy_number.search(line).group('policy_number')
-                        policy_elem['id'] = policy_number
-                        if not ('id' in order_keys): order_keys.append('id')
-
-                    # We match a setting
-                    if p_policy_set.search(line):
-                        policy_key = p_policy_set.search(line).group('policy_key')
-                        if not (policy_key in order_keys): order_keys.append(policy_key)
-
-                        policy_value = p_policy_set.search(line).group('policy_value').strip()
-                        policy_value = re.sub('["]', '', policy_value)
-
-                        policy_elem[policy_key] = policy_value
-
-                    # We are done with the current policy id
-                    if p_policy_next.search(line):
-                        policy_list.append(policy_elem)
-                        policy_elem = {}
-
-                # We are exiting the policy block
-                if p_exiting_policy_block.search(line):
-                    in_policy_block = False
-
-        return (policy_list, order_keys)
+    def _get_obj_by_uid(self, uid):
+        item = list(filter(lambda obj: obj['uid'] == uid, self.checkpoint_objects))[0]
+        return item
 
     def _parse_groups(self):
         # -- Entering group definition block
