@@ -27,7 +27,7 @@ class FortigateFirewall(Firewall):
             self.cursor.execute(
                 "INSERT INTO policy VALUES ('{}','{}','{}','{}', {})".format(res['name'], res['srcaddr'],
                                                                              res['dstaddr'], res['service'],
-                                                                             int(res['action'] == 'accept')))
+                                                                             int(res.get('action', 'deny') == 'accept')))
         results, keys = self._parse_addresses()
         for res in results:
             addr_type = self._str_to_address_type(res.get('type'))
@@ -41,6 +41,8 @@ class FortigateFirewall(Firewall):
             self.cursor.execute(
                 "INSERT INTO addressGroups VALUES ('{}', '{}')".format(res['name'], res['member'])
             )
+
+        self.conn.commit()
 
     def _parse_addresses(self):
         p_entering_address_block = re.compile('^\s*config firewall address$', re.IGNORECASE)
