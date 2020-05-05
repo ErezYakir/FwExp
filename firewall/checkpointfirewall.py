@@ -8,168 +8,118 @@ import json
 class CheckpointFirewall(Firewall):
     def __init__(self, ip, user, pwd):
         super().__init__(ip, user, pwd)
+
+    def fetch(self):
+        # TODO: fetch from http / ssh
         with open('checkpoint_config_files/Standard_objects.json', 'r') as f:
             self.checkpoint_objects = json.loads(f.read())
         with open('checkpoint_config_files/Network-Management server.json', 'r') as f:
             self.checkpoint_rules = json.loads(f.read())
 
-    def fetch(self):
-        # TODO: fetch from http / ssh
-        pass
-
-    def parseToDb(self):
-        super().parseToDb()
-        results = self._parse_policy()
-        # insert to table: id, name, uuid, srcintf, dstintf, srcaddr, dstaddr, services, priority, action, is_enabled
-        for res in results:
-            self.cursor.execute(
-                "INSERT INTO policy VALUES ('{}','{}','{}','{}','{}','{}','{}',{},{},{})".format(
-                    res['name'], res['uuid'], ','.join(res['srcintf']), ','.join(res['dstintf']),
-                    ','.join(res['srcaddr']), ','.join(res['dstaddr']), ','.join(res['service']), res['priority'],
-                    int(res['action']), int(res['enabled'])))
-
-    def _parse_addresses(self):
-        p_entering_address_block = re.compile('^\s*config firewall address$', re.IGNORECASE)
-        # -- Exiting address definition block
-        p_exiting_address_block = re.compile('^end$', re.IGNORECASE)
-
-        # -- Commiting the current address definition and going to the next one
-        p_address_next = re.compile('^next$', re.IGNORECASE)
-
-        # -- Policy number
-        p_address_name = re.compile('^\s*edit\s+"(?P<address_name>.*)"$', re.IGNORECASE)
-
-        # -- Policy setting
-        p_address_set = re.compile('^\s*set\s+(?P<address_key>\S+)\s+(?P<address_value>.*)$', re.IGNORECASE)
-        in_address_block = False
-
-        address_list = []
-        address_elem = {}
-
-        order_keys = []
-
-        with open("bkp.tmp", 'r') as fd_input:
-            for line in fd_input:
-                line = line.lstrip().rstrip().strip()
-
-                # We match a address block
-                if p_entering_address_block.search(line):
-                    in_address_block = True
-
-                # We are in a address block
-                if in_address_block:
-                    if p_address_name.search(line):
-                        address_name = p_address_name.search(line).group('address_name')
-                        address_elem['name'] = address_name
-                        if not ('name' in order_keys): order_keys.append('name')
-
-                    # We match a setting
-                    if p_address_set.search(line):
-                        address_key = p_address_set.search(line).group('address_key')
-                        if not (address_key in order_keys): order_keys.append(address_key)
-
-                        address_value = p_address_set.search(line).group('address_value').strip()
-                        address_value = re.sub('["]', '', address_value)
-
-                        address_elem[address_key] = address_value
-
-                    # We are done with the current address id
-                    if p_address_next.search(line):
-                        address_list.append(address_elem)
-                        address_elem = {}
-
-                # We are exiting the address block
-                if p_exiting_address_block.search(line):
-                    in_address_block = False
-
-        return (address_list, order_keys)
-
     def _parse_policy(self):
         policy_list = []
-        policy_elem = {}
+        policy_elem = {'name': '', 'id': '', 'srcintf': [], 'dstintf': [], 'srcaddr': [], 'dstaddr': [], 'service': [],
+                       'priority': -1, 'action': 0, 'enabled': 1}
 
         for item in self.checkpoint_rules:
             policy_elem['name'] = item['name']
-            policy_elem['uuid'] = item['uid']
-            policy_elem['srcintf'] = []
-            policy_elem['dstintf'] = []
-            policy_elem['srcaddr'] = []
-            policy_elem['dstaddr'] = []
-            policy_elem['service'] = []
+            policy_elem['id'] = item['uid']
             for src_uid in item['source']:
-                policy_elem['srcintf'] += self._get_obj_by_uid(src_uid).get('interfaces', []) # TODO: probably interface is uuid and need to fetch its name
-                policy_elem['srcaddr'].append(self._get_obj_by_uid(src_uid).get('name'))
+                policy_elem['srcaddr'].append(self._get_src_dst_obj_by_id(src_uid))
             for dst_uid in item['destination']:
-                policy_elem['dstintf'] += self._get_obj_by_uid(dst_uid).get('interfaces', [])
-                policy_elem['dstaddr'].append(self._get_obj_by_uid(dst_uid)['name'])
+                policy_elem['dstaddr'].append(self._get_src_dst_obj_by_id(src_uid))
             for srv_uid in item['service']:
                 policy_elem['service'].append(self._get_obj_by_uid(srv_uid)['name'])
             policy_elem['priority'] = item['rule-number']
             policy_elem['action'] = self._get_obj_by_uid(item['action'])['name'] == "Accept"
             policy_elem['enabled'] = item['enabled']
             policy_list.append(policy_elem)
-            policy_elem = {}
+            policy_elem = {'name': '', 'id': '', 'srcintf': [], 'dstintf': [], 'srcaddr': [], 'dstaddr': [],
+                           'service': [], 'priority': -1, 'action': 0, 'enabled': 1}
 
         return policy_list
+
+    def _get_src_dst_obj_by_id(self, id):
+        src_obj = self._get_obj_by_uid(id)
+        if src_obj['type'] == 'dns-domain':
+            # TODO: understand what this means
+            return {'type': 'NOT-IMPLEMENTED', 'name': ''}
+        elif src_obj['type'] == 'security-zone':
+            # TODO: understand what this means
+            return {'type': 'NOT-IMPLEMENTED', 'name': ''}
+        elif src_obj['type'] in ['host', 'CpmiAnyObject']:
+            return {'type': 'ADDRESS', 'name': src_obj['name']}
+        elif src_obj['type'] == 'group':
+            return {'type': 'GROUP', 'name': src_obj['name']}
+
+    def _parse_addresses(self):
+        address_list = []
+        address_elem = {'name': '', 'id': '', 'value': {'type': '', 'fqdn': '', 'max_ip': 0, 'min_ip': 0}}
+        for item in self.checkpoint_objects:
+            if item['type'] == 'CpmiAnyObject':
+                address_elem['name'] = item['name']
+                address_elem['id'] = item['uid']
+                address_elem['value']['type'] = 'IP_RANGE'
+                ip4net = ipaddress.IPv4Network('0.0.0.0/0')
+                address_elem['value']['min_ip'] = int(ip4net[0])
+                address_elem['value']['max_ip'] = int(ip4net[-1])
+                address_elem['domain'] = item['domain']['name']
+                address_list.append(address_elem)
+            elif item['type'] == 'host':
+                address_elem['name'] = item['name']
+                address_elem['id'] = item['uid']
+                address_elem['value']['type'] = 'IP_RANGE'
+                ip4addr = ipaddress.IPv4Address(item['ipv4-address'])
+                address_elem['value']['min_ip'] = int(ip4addr)
+                address_elem['value']['max_ip'] = int(ip4addr)
+                address_elem['domain'] = item['domain']['name']
+                address_list.append(address_elem)
+            elif item['type'] == 'network':
+                address_elem['name'] = item['name']
+                address_elem['id'] = item['uid']
+                address_elem['value']['type'] = 'IP_RANGE'
+                network, mask = item['subnet4'], item['mask-length4']
+                ip4net = ipaddress.IPv4Network('{}/{}'.format(network, mask))
+                address_elem['value']['min_ip'] = int(ip4net[0])
+                address_elem['value']['max_ip'] = int(ip4net[-1])
+                address_elem['domain'] = item['domain']['name']
+                address_list.append(address_elem)
+            elif item['type'] == 'address-range':
+                address_elem['name'] = item['name']
+                address_elem['id'] = item['uid']
+                address_elem['value']['type'] = 'IP_RANGE'
+                address_elem['value']['min_ip'] = int(ipaddress.IPv4Address(item['ipv4-address-first']))
+                address_elem['value']['max_ip'] = int(ipaddress.IPv4Address(item['ipv4-address-last']))
+                address_elem['domain'] = item['domain']['name']
+                address_list.append(address_elem)
+            elif item['type'] == 'wildcard':
+                address_elem['name'] = item['name']
+                address_elem['id'] = item['uid']
+                address_elem['value']['type'] = 'WILDCARD'
+                address_elem['value']['wildcard-address'] = item['ipv4-address']
+                address_elem['value']['wildcard-mask'] = item['ipv4-mask-wildcard']
+                address_elem['domain'] = item['domain']['name']
+                address_list.append(address_elem)
+        return address_list
+
+    def _parse_groups(self):
+        address_list = []
+        address_elem = {'name': '', 'id': '', 'value': {'type': '', 'name': ''}}
+        for item in self.checkpoint_objects:
+            if item['type'] == 'group':
+                for member_id in item['members']:
+                    member = self._get_obj_by_uid(member_id)
+                    if member['type'] == 'group':
+                        address_elem['value']['type'] = 'GROUP'
+                    else:
+                        address_elem['value']['type'] = 'ADDRESS'
+                    address_elem['value']['name'] = member['name']
+                address_list.append(address_elem)
+        return address_list
 
     def _get_obj_by_uid(self, uid):
         item = list(filter(lambda obj: obj['uid'] == uid, self.checkpoint_objects))[0]
         return item
-
-    def _parse_groups(self):
-        # -- Entering group definition block
-        p_entering_group_block = re.compile('^\s*config firewall addrgrp$', re.IGNORECASE)
-        # -- Exiting group definition block
-        p_exiting_group_block = re.compile('^end$', re.IGNORECASE)
-        # -- Commiting the current group definition and going to the next one
-        p_group_next = re.compile('^next$', re.IGNORECASE)
-        # -- Policy number
-        p_group_name = re.compile('^\s*edit\s+"(?P<group_name>.*)"$', re.IGNORECASE)
-        # -- Policy setting
-        p_group_set = re.compile('^\s*set\s+(?P<group_key>\S+)\s+(?P<group_value>.*)$', re.IGNORECASE)
-
-        in_group_block = False
-
-        group_list = []
-        group_elem = {}
-
-        order_keys = []
-
-        with open("bkp.tmp", 'r') as fd_input:
-            for line in fd_input:
-                line = line.lstrip().rstrip().strip()
-
-                # We match a group block
-                if p_entering_group_block.search(line):
-                    in_group_block = True
-
-                # We are in a group block
-                if in_group_block:
-                    if p_group_name.search(line):
-                        group_name = p_group_name.search(line).group('group_name')
-                        group_elem['name'] = group_name
-                        if not ('name' in order_keys): order_keys.append('name')
-
-                    # We match a setting
-                    if p_group_set.search(line):
-                        group_key = p_group_set.search(line).group('group_key')
-                        if not (group_key in order_keys): order_keys.append(group_key)
-
-                        group_value = p_group_set.search(line).group('group_value').strip()
-                        group_value = re.sub('["]', '', group_value)
-
-                        group_elem[group_key] = group_value
-
-                    # We are done with the current group id
-                    if p_group_next.search(line):
-                        group_list.append(group_elem)
-                        group_elem = {}
-
-                # We are exiting the group block
-                if p_exiting_group_block.search(line):
-                    in_group_block = False
-
-        return (group_list, order_keys)
 
     def _get_addr_details(self, values):
         addr_type, fqdn, min_ip, max_ip = '', '', '', ''

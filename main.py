@@ -2,7 +2,7 @@ from firewall import fortigatefirewall, checkpointfirewall
 from analyzer.analyzer import analyzer
 
 try:
-    f = fortigatefirewall.FortigateFirewall("52.161.22.180", "yakir", "Aa123456123456")
+    f = checkpointfirewall.CheckpointFirewall("52.161.22.180", "yakir", "Aa123456123456")
     f.fetch()
     f.parseToDb()
 

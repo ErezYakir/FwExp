@@ -108,8 +108,9 @@ class Firewall(object):
         returns an array of objects out of the firewall configuration which looks like:
         [{
         'name':'example', 'id':'123', 'srcintf':['interface1'],
-        'dstintf':['interface2', 'interface3'], 'srcaddr':['ALL_IPS'],
-        'dstaddr':['MY_IP', 'THIS_IP'], 'service':['SMB','TCP\123','UDP\53'],
+        'dstintf':['interface2', 'interface3'], 'srcaddr':[{'type':'ADDRESS', 'name':'ALL_IPS'}],
+        'dstaddr':[{'type':'ADDRESS', 'name':'MY_IP'}, {'type':'GROUP', 'name':'GRP1'}],
+         'service':['SMB','TCP\123','UDP\53'],
         'priority': 15, 'action': 1(ALLOW), 'enabled':0(not enabled)
         }]
         pay attention to the types of each value and to the name of each key. it's important to return
