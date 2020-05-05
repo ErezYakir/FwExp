@@ -1,14 +1,18 @@
 from enum import Enum
 import sqlite3
+import pymongo
+
 
 class Vendor(Enum):
     CHECKPOINT = 1
     FORTIGATE = 2
     PALOALTO = 3
 
+
 class AddressType(Enum):
     FQDN = 'FQDN'
     IP_RANGE = 'IP_RANGE'
+
 
 class Firewall(object):
     """
@@ -36,38 +40,109 @@ class Firewall(object):
 
 
     """
+
     def __init__(self, ip, user, pwd):
         self.ip = ip
         self.user = user
         self.pwd = pwd
         self.conn = sqlite3.connect('example.db')
         self.cursor = self.conn.cursor()
-
+        self.conn2 = pymongo.MongoClient("mongodb://localhost:27017/")
+        self.cursor2 = self.conn2["myDB"]
+        self.policy_col = self.cursor2['policy']
+        self.address_col = self.cursor2['addresses']
+        self.address_group_col = self.cursor2['address groups']
 
     def __del__(self):
         self.conn.commit()
         self.conn.close()
 
     def fetch(self):
-        """
-        Writes backup file of firewall to temp\bkp.tmp
-        :return:
-        """
         raise NotImplementedError()
 
     def parseToDb(self):
         """
-        Reads temp\bkp.tmp and converts to json file, write to out.json
+        Reads temp\bkp.tmp and updates mongodb accordingly
         :return:
         """
-        self.cursor.execute('''DROP TABLE IF EXISTS policy''')
-        self.cursor.execute('''DROP TABLE IF EXISTS addresses''')
-        self.cursor.execute('''DROP TABLE IF EXISTS addressGroups''')
-        self.cursor.execute('''CREATE TABLE policy
-                             (name TEXT, uuid TEXT, srcintf TEXT, dstintf TEXT, srcaddr TEXT,
-                              dstaddr TEXT, services TEXT, priority INTEGER, action INTEGER, is_enabled INTEGER)''')
-        self.cursor.execute('''CREATE TABLE addresses
-                                     (name TEXT, type TEXT, fqdn TEXT, min_addr INTEGER, max_addr INTEGER,
-                                      interface TEXT)''')
-        self.cursor.execute('''CREATE TABLE addressGroups
-                                             (name TEXT, details TEXT)''')
+        self.policy_col.drop()
+        self.address_col.drop()
+        self.address_group_col.drop()
+
+        results = self._parse_policy()
+        for res in results:
+            policy_dict = {
+                'name': res['name'],
+                'id': res['id'],
+                'srcintf': res['srcintf'],
+                'dstintf': res['dstintf'],
+                'srcaddr': res['srcaddr'],
+                'dstaddr': res['dstaddr'],
+                'service': res['service'],
+                'priority': res['priority'],
+                'action': res['action'],
+                'enabled': res['enabled']
+            }
+            self.policy_col.insert_one(policy_dict)
+
+        results = self._parse_addresses()
+        for res in results:
+            policy_dict = {
+                'name': res['name'],
+                'id': res['id'],
+                'value': res['value']
+            }
+            self.address_col.insert_one(policy_dict)
+
+        results = self._parse_groups()
+        for res in results:
+            policy_dict = {
+                'name': res['name'],
+                'id': res['id'],
+                'value': res['value']
+            }
+            self.address_group_col.insert_one(policy_dict)
+
+    def _parse_policy(self):
+        """
+        returns an array of objects out of the firewall configuration which looks like:
+        [{
+        'name':'example', 'id':'123', 'srcintf':['interface1'],
+        'dstintf':['interface2', 'interface3'], 'srcaddr':['ALL_IPS'],
+        'dstaddr':['MY_IP', 'THIS_IP'], 'service':['SMB','TCP\123','UDP\53'],
+        'priority': 15, 'action': 1(ALLOW), 'enabled':0(not enabled)
+        }]
+        pay attention to the types of each value and to the name of each key. it's important to return
+        it fully with every parameter, if needed, calculate yourself a value if not given in configuration.
+        It is possible to enlarge the returned object to allow for more features, but those are the required params.
+        """
+        raise NotImplementedError()
+
+    def _parse_addresses(self):
+        """
+        returns an array of objects out of the firewall configuration which looks like:
+        [{
+        'name':'my_address', 'id':'123', 'value': {'type':'FQDN', 'fqdn':'www.google.com'}
+        },
+        {
+        'name':'my_second_address', 'id':'145', 'value': {'type':'IP_RANGE', 'MIN_IP':'192.168.0.1', 'MAX_IP':'192.168.0.128'}
+        }
+        ]
+        pay attention to the types of each value and to the name of each key. it's important to return
+        it fully with every parameter, if needed, calculate yourself a value if not given in configuration.
+        It is possible to enlarge the returned object to allow for more features, but those are the required params.
+        """
+        raise NotImplementedError()
+
+    def _parse_groups(self):
+        """
+        returns an array of objects out of the firewall configuration which looks like:
+        [{
+        'name':'my_group', 'id':'123', 'value': [{'type':'address', 'name':'my_address'}, {'type':'group', name:'grp1'}]
+        }
+        ]
+        pay attention to the types of each value and to the name of each key. it's important to return
+        it fully with every parameter, if needed, calculate yourself a value if not given in configuration.
+        It is possible to enlarge the returned object to allow for more features, but those are the required params.
+        """
+        raise NotImplementedError()
