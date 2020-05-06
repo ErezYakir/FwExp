@@ -6,8 +6,8 @@ import json
 
 
 class CheckpointFirewall(Firewall):
-    def __init__(self, ip, user, pwd):
-        super().__init__(ip, user, pwd)
+    def __init__(self, ip, user, pwd, db_name):
+        super().__init__(ip, user, pwd, db_name)
         self.known_obj_types = ['vpn-community-meshed', 'dns-domain', 'RulebaseAction', 'service-tcp',
                               'CpmiLogicalServer', 'Global', 'security-zone', 'Track', 'threat-profile',
                               'ThreatExceptionRulebase', 'host', 'CpmiAnyObject', 'group', 'wildcard', 'network',
@@ -23,25 +23,18 @@ class CheckpointFirewall(Firewall):
 
     def _parse_policy(self):
         policy_list = []
-        policy_elem = {'name': '', 'id': '', 'srcintf': [], 'dstintf': [], 'srcaddr': [], 'dstaddr': [], 'service': [],
-                       'priority': -1, 'action': 0, 'enabled': 1}
-
-        for item in self.checkpoint_rules:
-            policy_elem['name'] = item['name']
-            policy_elem['id'] = item['uid']
-            for src_uid in item['source']:
-                policy_elem['srcaddr'].append(self._get_src_dst_obj_by_id(src_uid))
-            for dst_uid in item['destination']:
-                policy_elem['dstaddr'].append(self._get_src_dst_obj_by_id(src_uid))
-            for srv_uid in item['service']:
-                policy_elem['service'].append(self._get_obj_by_uid(srv_uid)['name'])
-            policy_elem['priority'] = item['rule-number']
-            policy_elem['action'] = self._get_obj_by_uid(item['action'])['name'] == "Accept"
-            policy_elem['enabled'] = item['enabled']
-            policy_list.append(policy_elem)
-            policy_elem = {'name': '', 'id': '', 'srcintf': [], 'dstintf': [], 'srcaddr': [], 'dstaddr': [],
-                           'service': [], 'priority': -1, 'action': 0, 'enabled': 1}
-
+        for rule in self.checkpoint_rules:
+            rule['id'] = rule.pop('uid')
+            rule['priority'] = rule.pop('rule-number')
+            rule['action'] = (self._get_obj_by_uid(rule['action'])['name'] == 'Accept')
+            rule.pop('comments', None)
+            rule.pop('meta-info', None)
+            rule.pop('time', None)
+            rule.pop('install-on', None)
+            rule.pop('track', None)
+            rule.pop('action-settings', None)
+            rule.pop('custom-fields', None)
+            policy_list.append(rule)
         return policy_list
 
     def _parse_service_objects(self):
@@ -52,12 +45,29 @@ class CheckpointFirewall(Firewall):
         parsed_objs = []
         for obj in self.checkpoint_objects:
             obj_type = obj['type']
-            if obj_type == 'service-tcp':
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': obj['type'],
-                           }
-            elif obj_type in ['vpn-community-meshed', 'dns-domain', 'RulebaseAction', 'service-tcp',
-                              'CpmiLogicalServer', 'Global', 'security-zone', 'Track', 'threat-profile',
-                              'ThreatExceptionRulebase']:
+            if obj_type == 'service-udp':
+                # Match for Any: Indicates whether this service is used when 'Any' is set as the rule's service and
+                # there are several service objects with the same source port and protocol.
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'udp',
+                           'port': obj['port'], 'protocol': obj.get('protocol'),
+                           'match-signature': obj['match-by-protocol-signature'], 'match-for-any': obj['match-for-any']}
+            elif obj_type == 'service-dce-rpc':
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'dce-rpc',
+                           'interface-uuid': obj['interface-uuid']}
+            elif obj_type == 'service-rpc':
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'dce-rpc',
+                           'program-number': obj['program-number']}
+            elif obj_type == 'service-tcp':
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'tcp',
+                           'port': obj['port'], 'protocol': obj.get('protocol'),
+                           'match-signature': obj['match-by-protocol-signature'], 'match-for-any': obj['match-for-any']}
+            elif obj_type == 'service-icmp':
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'icmp',
+                           'icmp-type': obj['icmp-type'], 'icmp-code': obj['icmp-code']}
+            elif obj_type == 'service-group':
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'],
+                           'type': 'group', 'members': obj['members']}
+            elif obj_type in self.known_obj_types:
                 continue
             else:
                 raise NotImplementedError()

@@ -7,8 +7,6 @@ import ipaddress
 
 
 class FortigateFirewall(Firewall):
-    def __init__(self, ip, user, pwd):
-        super().__init__(ip, user, pwd)
 
     def fetch(self):
         ses = requests.Session()
