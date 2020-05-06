@@ -164,6 +164,7 @@ class FortigateFirewall(Firewall):
 
         return policy_list
 
+
     def _get_all_group_names(self):
         groups_data = re.search("config firewall addrgrp[\s\S]+?end", self.backup_config)
         groups = re.findall("edit\s\"(.*?)\"", groups_data.group(0))

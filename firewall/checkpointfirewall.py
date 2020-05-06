@@ -8,6 +8,11 @@ import json
 class CheckpointFirewall(Firewall):
     def __init__(self, ip, user, pwd):
         super().__init__(ip, user, pwd)
+        self.known_obj_types = ['vpn-community-meshed', 'dns-domain', 'RulebaseAction', 'service-tcp',
+                              'CpmiLogicalServer', 'Global', 'security-zone', 'Track', 'threat-profile',
+                              'ThreatExceptionRulebase', 'host', 'CpmiAnyObject', 'group', 'wildcard', 'network',
+                                'address-range', 'service-udp', 'service-dce-rpc', 'service-icmp', 'service-rpc',
+                                'CpmiSrCommunity', 'service-group']
 
     def fetch(self):
         # TODO: fetch from http / ssh
@@ -39,6 +44,64 @@ class CheckpointFirewall(Firewall):
 
         return policy_list
 
+    def _parse_service_objects(self):
+        #### List of possible object types:
+        # host, vpn-community-meshed
+        #### List of object possible parsed properties:
+        # ip_min, ip_max
+        parsed_objs = []
+        for obj in self.checkpoint_objects:
+            obj_type = obj['type']
+            if obj_type == 'service-tcp':
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': obj['type'],
+                           }
+            elif obj_type in ['vpn-community-meshed', 'dns-domain', 'RulebaseAction', 'service-tcp',
+                              'CpmiLogicalServer', 'Global', 'security-zone', 'Track', 'threat-profile',
+                              'ThreatExceptionRulebase']:
+                continue
+            else:
+                raise NotImplementedError()
+            parsed_objs.append(new_obj)
+        return parsed_objs
+
+    def _parse_address_objects(self):
+        #### List of possible object types:
+        # host, vpn-community-meshed
+        #### List of object possible parsed properties:
+        # ip_min, ip_max
+        parsed_objs = []
+        for obj in self.checkpoint_objects:
+            obj_type = obj['type']
+            if obj_type == 'host':
+                ip = int(ipaddress.IPv4Address(obj['ipv4-address']))
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': obj['type'],
+                           'interfaces': obj['interfaces'], 'ip_min': ip, 'ip_max': ip}
+            elif obj_type == 'CpmiAnyObject':
+                ip_min = int(ipaddress.IPv4Network('0.0.0.0/0')[0])
+                ip_max = int(ipaddress.IPv4Network('0.0.0.0/0')[-1])
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': obj['type'],
+                           'ip_min': ip_min, 'ip_max': ip_max}
+            elif obj_type == 'group':
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': obj['type'],
+                           'members': obj['members']}
+            elif obj_type == 'wildcard':
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': obj['type'],
+                           'wildcard_ip': obj['ipv4-address'], 'wildcard_mask': obj['ipv4-mask-wildcard']}
+            elif obj_type == 'network':
+                net = ipaddress.IPv4Network('{}/{}'.format(obj['subnet4'], obj['mask-length4']))
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': obj['type'],
+                           'ip_min': int(net[0]), 'ip_max': int(net[-1])}
+            elif obj_type == 'address-range':
+                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': obj['type'],
+                           'ip_min': int(ipaddress.IPv4Address(obj['ipv4-address-first'])),
+                           'ip_max': int(ipaddress.IPv4Address(obj['ipv4-address-last']))}
+            elif obj_type in self.known_obj_types:
+                continue
+            else:
+                print (obj_type)
+                raise NotImplementedError()
+            parsed_objs.append(new_obj)
+        return parsed_objs
     def _get_src_dst_obj_by_id(self, id):
         src_obj = self._get_obj_by_uid(id)
         if src_obj['type'] == 'dns-domain':

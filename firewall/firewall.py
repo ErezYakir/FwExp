@@ -50,8 +50,10 @@ class Firewall(object):
         self.conn2 = pymongo.MongoClient("mongodb://localhost:27017/")
         self.cursor2 = self.conn2["myDB"]
         self.policy_col = self.cursor2['policy']
-        self.address_col = self.cursor2['addresses']
-        self.address_group_col = self.cursor2['address groups']
+        self.address_objects_col = self.cursor2['addr_objects']
+        self.service_objects_col = self.cursor2['srvs_objects']
+        #self.address_col = self.cursor2['addresses']
+        #self.address_group_col = self.cursor2['address groups']
 
     def __del__(self):
         self.conn.commit()
@@ -65,9 +67,15 @@ class Firewall(object):
         Reads temp\bkp.tmp and updates mongodb accordingly
         :return:
         """
+        self.address_objects_col.drop()
+        self.service_objects_col.drop()
         self.policy_col.drop()
-        self.address_col.drop()
-        self.address_group_col.drop()
+
+        results = self._parse_address_objects()
+        self.address_objects_col.insert_many(results)
+
+        results = self._parse_service_objects()
+        self.service_objects_col.insert_many(results)
 
         results = self._parse_policy()
         for res in results:
@@ -85,23 +93,10 @@ class Firewall(object):
             }
             self.policy_col.insert_one(policy_dict)
 
-        results = self._parse_addresses()
-        for res in results:
-            policy_dict = {
-                'name': res['name'],
-                'id': res['id'],
-                'value': res['value']
-            }
-            self.address_col.insert_one(policy_dict)
-
-        results = self._parse_groups()
-        for res in results:
-            policy_dict = {
-                'name': res['name'],
-                'id': res['id'],
-                'value': res['value']
-            }
-            self.address_group_col.insert_one(policy_dict)
+    def _parse_address_objects(self):
+        raise NotImplementedError()
+    def _parse_service_objects(self):
+        raise NotImplementedError()
 
     def _parse_policy(self):
         """
