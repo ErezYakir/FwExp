@@ -13,3 +13,6 @@ def check_ipv4_in_subnet(ip, network, mask):
 
 def ipv4_to_int(ip):
     return int(ipaddress.IPv4Address(ip))
+
+def remove_duplicates(x):
+  return list(dict.fromkeys(x))

@@ -41,21 +41,15 @@ class Firewall(object):
 
     """
 
-    def __init__(self, ip, user, pwd, db_name):
+    def __init__(self, ip, user, pwd, db_path):
         self.ip = ip
         self.user = user
         self.pwd = pwd
-        self.conn = sqlite3.connect('example.db')
-        self.cursor = self.conn.cursor()
-        self.conn2 = pymongo.MongoClient("mongodb://localhost:27017/")
-        self.cursor2 = self.conn2[db_name]
-        self.policy_col = self.cursor2['policy']
-        self.address_objects_col = self.cursor2['addresses']
-        self.service_objects_col = self.cursor2['services']
-
-    def __del__(self):
-        self.conn.commit()
-        self.conn.close()
+        self.conn = pymongo.MongoClient(db_path)
+        self.cursor = self.conn["Firewall_info"]
+        self.policy_col = self.cursor['policy']
+        self.address_objects_col = self.cursor['addresses']
+        self.service_objects_col = self.cursor['services']
 
     def fetch(self):
         raise NotImplementedError()
@@ -69,18 +63,18 @@ class Firewall(object):
         self.service_objects_col.drop()
         self.policy_col.drop()
 
-        results = self._parse_address_objects()
+        results = self._parse_addresses()
         self.address_objects_col.insert_many(results)
 
-        results = self._parse_service_objects()
+        results = self._parse_services()
         self.service_objects_col.insert_many(results)
 
         results = self._parse_policy()
         self.policy_col.insert_many(results)
 
-    def _parse_address_objects(self):
+    def _parse_addresses(self):
         raise NotImplementedError()
-    def _parse_service_objects(self):
+    def _parse_services(self):
         raise NotImplementedError()
 
     def _parse_policy(self):
