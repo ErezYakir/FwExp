@@ -1,13 +1,13 @@
 import requests
-import re
+import uuid
 from .firewall import Firewall
 import ipaddress
 import json
 
 
 class CheckpointFirewall(Firewall):
-    def __init__(self, ip, user, pwd, db_name):
-        super().__init__(ip, user, pwd, db_name)
+    def __init__(self, ip, user, pwd, db_path, db_name="Firewall_info"):
+        super().__init__(ip, user, pwd, db_path, db_name)
         self.known_obj_types = ['vpn-community-meshed', 'dns-domain', 'RulebaseAction', 'service-tcp',
                               'CpmiLogicalServer', 'Global', 'security-zone', 'Track', 'threat-profile',
                               'ThreatExceptionRulebase', 'host', 'CpmiAnyObject', 'group', 'wildcard', 'network',
@@ -24,132 +24,148 @@ class CheckpointFirewall(Firewall):
 
     def _parse_policy(self):
         policy_list = []
+        policy_item = {'extra_info': {}}
         for rule in self.checkpoint_rules:
-            rule['id'] = rule.pop('uid')
-            rule['priority'] = rule.pop('rule-number')
-            rule['action'] = (self._get_obj_by_uid(rule['action'])['name'] == 'Accept')
-            #rule.pop('comments', None)
-            rule.pop('meta-info', None)
-            rule.pop('time', None)
-            rule.pop('install-on', None)
-            rule.pop('track', None)
-            rule.pop('action-settings', None)
-            rule.pop('custom-fields', None)
-            policy_list.append(rule)
+            for key in rule:
+                if key == 'uid':
+                    policy_item['id'] = rule[key]
+                elif key == 'rule-number':
+                    policy_item['priority'] = rule[key]
+                elif key == 'action':
+                    policy_item['action'] = (self._get_obj_by_uid(rule['action'])['name'] == 'Accept')
+                elif key in ['source-negate', 'destination-negate', 'service-negate', 'destination', 'source', 'enabled', 'vpn', 'service', 'name']:
+                    policy_item[key] = rule[key]
+                else:
+                    policy_item['extra_info'][key] = rule[key]
+            policy_list.append(policy_item)
+            policy_item = {'extra_info': {}}
         return policy_list
 
     def _parse_services(self):
-        #### List of possible object types:
-        # host, vpn-community-meshed
-        #### List of object possible parsed properties:
-        # ip_min, ip_max
         parsed_objs = []
         for obj in self.checkpoint_objects:
-            obj_type = obj['type']
-            if obj_type == 'service-udp':
-                # Match for Any: Indicates whether this service is used when 'Any' is set as the rule's service and
-                # there are several service objects with the same source port and protocol.
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'],
-                           'udp-port': obj['port'], 'protocol': obj.get('protocol'),
-                           'match-signature': obj['match-by-protocol-signature'], 'match-for-any': obj['match-for-any']}
-            elif obj_type == 'service-dce-rpc':
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'dce-rpc',
-                           'interface-uuid': obj['interface-uuid']}
-            elif obj_type == 'service-rpc':
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'dce-rpc',
-                           'program-number': obj['program-number']}
-            elif obj_type == 'service-tcp':
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'],
-                           'tcp-port': obj['port'], 'protocol': obj.get('protocol'),
-                           'match-signature': obj['match-by-protocol-signature'], 'match-for-any': obj['match-for-any']}
-            elif obj_type == 'service-icmp':
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'icmp',
-                           'icmp-type': obj['icmp-type'], 'icmp-code': obj['icmp-code']}
-            elif obj_type == 'service-group':
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'],
-                           'type': 'group', 'members': obj['members']}
-            elif obj_type in self.known_obj_types:
+            if obj['type'] in ['service-udp0', 'service-dce-rpc', 'service-rpc', 'service-tcp', 'service-icmp', 'service-group']:
+                new_svc = self._parse_single_service(obj)
+                parsed_objs.append(new_svc)
+            elif obj['type'] in self.known_obj_types:
                 continue
             else:
                 raise NotImplementedError()
-            parsed_objs.append(new_obj)
         return parsed_objs
 
     def _parse_addresses(self):
-        #### List of possible object types:
-        # host, vpn-community-meshed
-        #### List of object possible parsed properties:
-        # ip_min, ip_max
         parsed_objs = []
         for obj in self.checkpoint_objects:
-            obj_type = obj['type']
-            if obj_type == 'host':
-                members = []
-                for interface in obj.get('interfaces', []):
-                    net = ipaddress.IPv4Network('{}/{}'.format(interface['subnet4'], interface['mask-length4']))
-                    parsed_objs.append({'name': interface['name'], 'id': obj['uid'], 'domain': obj['domain'],
-                                        'type': 'IP_RANGE', 'min_ip': int(net[0]), 'max_ip': int(net[-1])})
-                    members.append(obj['uid'])
-                ip = int(ipaddress.IPv4Address(obj['ipv4-address']))
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'IP_RANGE',
-                           'members': members, 'min_ip': ip, 'max_ip': ip}
-            elif obj_type == 'CpmiAnyObject':
-                ip_min = int(ipaddress.IPv4Network('0.0.0.0/0')[0])
-                ip_max = int(ipaddress.IPv4Network('0.0.0.0/0')[-1])
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'IP_RANGE',
-                           'min_ip': ip_min, 'max_ip': ip_max}
-            elif obj_type == 'group':
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'IP_RANGE',
-                           'members': obj['members']}
-            elif obj_type == 'wildcard':
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'IP_RANGE',
-                           'wildcard_ip': obj['ipv4-address'], 'wildcard_mask': obj['ipv4-mask-wildcard']}
-            elif obj_type == 'network':
-                net = ipaddress.IPv4Network('{}/{}'.format(obj['subnet4'], obj['mask-length4']))
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'IP_RANGE',
-                           'min_ip': int(net[0]), 'max_ip': int(net[-1])}
-            elif obj_type == 'address-range':
-                new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'IP_RANGE',
-                           'min_ip': int(ipaddress.IPv4Address(obj['ipv4-address-first'])),
-                           'max_ip': int(ipaddress.IPv4Address(obj['ipv4-address-last']))}
-            elif obj_type in self.known_obj_types:
+            if obj['type'] == 'host':
+                # In checkpoint, host can contain subnets, so we'll consider it as a group
+                new_network_objs = self._parse_host_as_group(obj)
+                parsed_objs.extend(new_network_objs)
+            elif obj['type'] in ['CpmiAnyObject', 'group', 'wildcard', 'network', 'address-range']:
+                new_network_obj = self._parse_single_network_object(obj)
+                parsed_objs.append(new_network_obj)
+            elif obj['type'] in self.known_obj_types:
                 continue
             else:
-                print (obj_type)
+                print (obj['type'])
                 raise NotImplementedError()
-            parsed_objs.append(new_obj)
         return parsed_objs
-
-    def _get_src_dst_obj_by_id(self, id):
-        src_obj = self._get_obj_by_uid(id)
-        if src_obj['type'] == 'dns-domain':
-            # TODO: understand what this means
-            return {'type': 'NOT-IMPLEMENTED', 'name': ''}
-        elif src_obj['type'] == 'security-zone':
-            # TODO: understand what this means
-            return {'type': 'NOT-IMPLEMENTED', 'name': ''}
-        elif src_obj['type'] in ['host', 'CpmiAnyObject']:
-            return {'type': 'ADDRESS', 'name': src_obj['name']}
-        elif src_obj['type'] == 'group':
-            return {'type': 'GROUP', 'name': src_obj['name']}
 
     def _get_obj_by_uid(self, uid):
         item = list(filter(lambda obj: obj['uid'] == uid, self.checkpoint_objects))[0]
         return item
 
-    def _get_addr_details(self, values):
-        addr_type, fqdn, min_ip, max_ip = '', '', '', ''
-        type = values.get('type')
-        if type == 'fqdn':
-            return ('FQDN', values.get('fqdn', ''), 0, 0)
-        if type == 'iprange':
-            ip_min = int(ipaddress.IPv4Address(values.get('start-ip')))
-            ip_max = int(ipaddress.IPv4Address(values.get('end-ip')))
-            return ('IP_RANGE', '', ip_min, ip_max)
-        if type == 'dynamic':
-            return ('NOT IMPLEMENTED', '', 0, 0)  # TODO: understand what is Address-Type of Dynamic and treat accordingly
-        # if type is Null then it is type of subnet
-        else:
-            network, mask = values.get('subnet', '0.0.0.0 0.0.0.0').split(' ')
-            ip_addresses_range = ipaddress.IPv4Network('{}/{}'.format(network,mask))
-            return ('IP_RANGE', '', int(ip_addresses_range[0]), int(ip_addresses_range[-1]))
+    def _parse_single_service(self, obj):
+        svc_item = {'extra_info': {}}
+        for key in obj:
+            if key == 'uid':
+                svc_item['id'] = obj[key]
+            elif key == 'port' and obj['type'] == 'service-udp':
+                svc_item['udp-portrange'] = obj[key]
+            elif key == 'port' and obj['type'] == 'service-tcp':
+                svc_item['tcp-portrange'] = obj[key]
+            elif key in ['interface-uuid', 'type', 'program-number', 'icmp-type', 'icmp-code', 'members']:
+                svc_item[key] = obj[key]
+            else:
+                svc_item['extra_info'][key] = obj[key]
+        return svc_item
+        """    
+        obj_type = obj['type']
+        if obj_type == 'service-udp':
+            new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'],
+                       'udp-port': obj['port'], 'protocol': obj.get('protocol'),
+                       'match-signature': obj['match-by-protocol-signature'], 'match-for-any': obj['match-for-any']}
+        elif obj_type == 'service-dce-rpc':
+            new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'dce-rpc',
+                       'interface-uuid': obj['interface-uuid']}
+        elif obj_type == 'service-rpc':
+            new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'rpc',
+                       'program-number': obj['program-number']}
+        elif obj_type == 'service-tcp':
+            new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'],
+                       'tcp-port': obj['port'], 'protocol': obj.get('protocol'),
+                       'match-signature': obj['match-by-protocol-signature'], 'match-for-any': obj['match-for-any']}
+        elif obj_type == 'service-icmp':
+            new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'], 'type': 'icmp',
+                       'icmp-type': obj['icmp-type'], 'icmp-code': obj['icmp-code']}
+        elif obj_type == 'service-group':
+            new_obj = {'name': obj['name'], 'id': obj['uid'], 'domain': obj['domain'],
+                       'type': 'GROUP', 'members': obj['members']}
+        """
+
+    def _parse_single_network_object(self, obj):
+        single_item = {'extra_info': {}}
+        obj_type = obj['type']
+        if obj_type == 'CpmiAnyObject':
+            single_item['type'] = 'IP_RANGE'
+            single_item['min_ip'] = int(ipaddress.IPv4Network('0.0.0.0/0')[0])
+            single_item['max_ip'] = int(ipaddress.IPv4Network('0.0.0.0/0')[-1])
+        elif obj_type == 'group':
+            single_item['type'] = 'GROUP'
+        elif obj_type == 'wildcard':
+            single_item['type'] = 'WILDCARD'
+            single_item['wildcard_ip'] = obj['ipv4-address']
+            single_item['wildcard_mask'] = obj['ipv4-mask-wildcard']
+        elif obj_type == 'network' or obj_type == 'CpmiInterface':
+            net = ipaddress.IPv4Network('{}/{}'.format(obj['subnet4'], obj['mask-length4']))
+            single_item['type'] = 'IP_RANGE'
+            single_item['min_ip'] = int(net[0])
+            single_item['max_ip'] = int(net[-1])
+        elif obj_type == 'address-range':
+            single_item['type'] = 'IP_RANGE'
+            single_item['min_ip'] = int(ipaddress.IPv4Address(obj['ipv4-address-first']))
+            single_item['max_ip'] = int(ipaddress.IPv4Address(obj['ipv4-address-last']))
+        single_item['name'] = obj['name']
+        for key in obj:
+            if key == 'uid':
+                single_item['id'] = obj[key]
+            elif key in ['ipv4-address-first', 'ipv4-address-last', 'subnet4', 'mask-length4', 'ipv4-address', 'ipv4-mask-wildcard', 'type', 'subnet-mask']:
+                pass
+            else:
+                single_item['extra_info'][key] = obj[key]
+
+        return single_item
+
+    def _parse_host_as_group(self, obj):
+        parsed_objs = []
+        members = []
+        for interface in obj.get('interfaces', []):
+            parsed_interface = self._parse_single_network_object(interface)
+            members.append(parsed_interface['id'])
+            parsed_objs.append(parsed_interface)
+        # Creating a new object that is not in checkpoint so host can be a group
+        ip = int(ipaddress.IPv4Address(obj['ipv4-address']))
+        new_obj_uuid = str(uuid.uuid4())
+        members.append(new_obj_uuid)
+        new_obj = {'name': obj['name']+'_HOST_IP_OBJ', 'id': new_obj_uuid, 'type': 'IP_RANGE', 'min_ip': ip, 'max_ip': ip}
+        parsed_objs.append(new_obj)
+
+        # Now creating the group
+        group_obj = {'type': 'GROUP', 'name': obj['name'], 'members': members, 'id': obj['uid'], 'extra_info': {}}
+        for key in obj:
+            if key not in ['type', 'name', 'interfaces', 'ipv4-address', 'uid']:
+                group_obj['extra_info'][key] = obj[key]
+
+        parsed_objs.append(group_obj)
+        return parsed_objs
+
+

@@ -1,5 +1,5 @@
 import urllib.request
-import ssl
+import shlex
 import requests
 import re
 from .firewall import Firewall, AddressType
@@ -19,23 +19,14 @@ class FortigateFirewall(Firewall):
 
     def _parse_addresses(self):
         p_entering_address_block = re.compile('^\s*config firewall address$', re.IGNORECASE)
-        # -- Exiting address definition block
         p_exiting_address_block = re.compile('^end$', re.IGNORECASE)
-
-        # -- Commiting the current address definition and going to the next one
         p_address_next = re.compile('^next$', re.IGNORECASE)
-
-        # -- Policy number
         p_address_name = re.compile('^\s*edit\s+"(?P<address_name>.*)"$', re.IGNORECASE)
-
-        # -- Policy setting
         p_address_set = re.compile('^\s*set\s+(?P<address_key>\S+)\s+(?P<address_value>.*)$', re.IGNORECASE)
         in_address_block = False
 
         address_list = []
-        address_elem = {'name':'', 'id':'', 'value':{'type':'', 'fqdn':'', 'max_ip':0, 'min_ip':0}}
-
-        order_keys = []
+        address_elem = {'extra_info': {}}
 
         for line in self.backup_config.splitlines():
             line = line.lstrip().rstrip().strip()
@@ -49,17 +40,18 @@ class FortigateFirewall(Firewall):
                 if p_address_name.search(line):
                     address_name = p_address_name.search(line).group('address_name')
                     address_elem['name'] = address_name
-                    if not ('name' in order_keys): order_keys.append('name')
 
                 # We match a setting
                 if p_address_set.search(line):
                     address_key = p_address_set.search(line).group('address_key')
-                    if not (address_key in order_keys): order_keys.append(address_key)
 
                     address_value = p_address_set.search(line).group('address_value').strip()
                     address_value = re.sub('["]', '', address_value)
 
-                    address_elem[address_key] = address_value
+                    if address_key not in ['uuid', 'type', 'fqdn', 'start-ip', 'end-ip', 'subnet']:
+                        address_elem['extra_info'][address_key] = address_value
+                    else:
+                        address_elem[address_key] = address_value
 
                 # We are done with the current address id
                 if p_address_next.search(line):
@@ -83,7 +75,7 @@ class FortigateFirewall(Firewall):
                                         'type': 'IP_RANGE', 'min_ip': int(address_range[0]),
                                                   'max_ip': int(address_range[-1])}
                     address_list.append(address_elem)
-                    address_elem = {}
+                    address_elem = {'extra_info': {}}
 
             # We are exiting the address block
             if p_exiting_address_block.search(line):
@@ -93,23 +85,16 @@ class FortigateFirewall(Firewall):
         return address_list
 
     def _parse_policy(self):
-        # -- Entering policy definition block
         p_entering_policy_block = re.compile('^\s*config firewall policy$', re.IGNORECASE)
-        # -- Exiting policy definition block
         p_exiting_policy_block = re.compile('^end$', re.IGNORECASE)
-        # -- Commiting the current policy definition and going to the next one
         p_policy_next = re.compile('^next$', re.IGNORECASE)
-        # -- Policy number
         p_policy_number = re.compile('^\s*edit\s+(?P<policy_number>\d+)', re.IGNORECASE)
-        # -- Policy setting
         p_policy_set = re.compile('^\s*set\s+(?P<policy_key>\S+)\s+(?P<policy_value>.*)$', re.IGNORECASE)
 
         in_policy_block = False
 
         policy_list = []
-        policy_elem = {}
-
-        order_keys = []
+        policy_elem = {'extra_info': {}}
         priority = 1
         for line in self.backup_config.splitlines():
             line = line.lstrip().rstrip().strip()
@@ -125,41 +110,40 @@ class FortigateFirewall(Firewall):
                     policy_elem['priority'] = priority
                     policy_elem['enabled'] = 1
                     priority += 1
-                    if not ('id' in order_keys): order_keys.append('id')
 
                 # We match a setting
                 if p_policy_set.search(line):
                     policy_key = p_policy_set.search(line).group('policy_key')
-                    if not (policy_key in order_keys): order_keys.append(policy_key)
 
                     policy_value = p_policy_set.search(line).group('policy_value').strip()
-                    policy_value = re.sub('["]', '', policy_value)
+                    #policy_value = re.sub('["]', '', policy_value)
 
                     if policy_key == 'uuid':
-                        policy_key = 'id'
-                    if policy_key == 'action':
-                        policy_value = int(policy_value == 'accept')
-                    if policy_key in ['srcaddr', 'dstaddr']:
+                        policy_elem['id'] = policy_value.strip("\"")
+                    elif policy_key == 'action':
+                        policy_elem['action'] = int(policy_value.strip("\"") == 'accept')
+                    elif policy_key in ['srcaddr', 'dstaddr']:
                         addresses = []
-                        for addr_name in policy_value.split(' '):
+                        for addr_name in shlex.split(policy_value):
                             addresses.append(self._get_obj_id_by_name(addr_name))
-                        policy_value = addresses
-
-                    if policy_key in ['service']:
+                        policy_elem[policy_key] = addresses
+                    elif policy_key in ['service']:
                         # in fortigate service has no id, so it's name is the id
                         services = []
-                        for svc in policy_value.split(' '):
+                        for svc in shlex.split(policy_value):
                             services.append(svc)
-                        policy_value = services
-
-                    policy_elem[policy_key] = policy_value
+                        policy_elem["service"] = services
+                    elif policy_key not in ['id', 'name']:
+                        policy_elem['extra_info'][policy_key] = policy_value.strip("\"")
+                    else:
+                        policy_elem[policy_key] = policy_value.strip("\"")
 
                 # We are done with the current policy id
                 if p_policy_next.search(line):
                     policy_elem['source'] = policy_elem.pop('srcaddr')
                     policy_elem['destination'] = policy_elem.pop('dstaddr')
                     policy_list.append(policy_elem)
-                    policy_elem = {}
+                    policy_elem = {'extra_info': {}}
 
             # We are exiting the policy block
             if p_exiting_policy_block.search(line):
@@ -173,22 +157,16 @@ class FortigateFirewall(Firewall):
         return groups
 
     def _parse_groups(self):
-        # -- Entering group definition block
         p_entering_group_block = re.compile('^\s*config firewall addrgrp$', re.IGNORECASE)
-        # -- Exiting group definition block
         p_exiting_group_block = re.compile('^end$', re.IGNORECASE)
-        # -- Commiting the current group definition and going to the next one
         p_group_next = re.compile('^next$', re.IGNORECASE)
-        # -- Policy number
         p_group_name = re.compile('^\s*edit\s+"(?P<group_name>.*)"$', re.IGNORECASE)
-        # -- Policy setting
         p_group_set = re.compile('^\s*set\s+(?P<group_key>\S+)\s+(?P<group_value>.*)$', re.IGNORECASE)
 
         in_group_block = False
 
         group_list = []
-        group_elem = {}
-        order_keys = []
+        group_elem = {'extra_info': {}}
 
         groups_names = []
 
@@ -205,31 +183,30 @@ class FortigateFirewall(Firewall):
                     group_name = p_group_name.search(line).group('group_name')
                     group_elem['name'] = group_name
                     groups_names.append(group_name)
-                    if not ('name' in order_keys): order_keys.append('name')
 
                 # We match a setting
                 if p_group_set.search(line):
                     group_key = p_group_set.search(line).group('group_key')
-                    if not (group_key in order_keys): order_keys.append(group_key)
 
                     group_value = p_group_set.search(line).group('group_value').strip()
-                    group_value = re.sub('["]', '', group_value)
+                    #group_value = re.sub('["]', '', group_value)
 
                     if group_key == 'uuid':
-                        group_key = 'id'
-                    if group_key == 'member':
+                        group_elem['id'] = group_value.strip("\"")
+                    elif group_key == 'member':
                         group_key = 'members'
                         members = []
-                        for member in group_value.split(' '):
+                        for member in shlex.split(group_value):
                             members.append(self._get_obj_id_by_name(member))
-                        group_value = members
-                    group_elem[group_key] = group_value
+                        group_elem['members'] = members
+                    else:
+                        group_elem[group_key] = group_value.strip("\"")
 
                 # We are done with the current group id
                 if p_group_next.search(line):
-                    group_elem['type'] = 'IP_RANGE'
+                    group_elem['type'] = 'GROUP'
                     group_list.append(group_elem)
-                    group_elem = {}
+                    group_elem = {'extra_info': {}}
 
             # We are exiting the group block
             if p_exiting_group_block.search(line):
@@ -243,7 +220,7 @@ class FortigateFirewall(Firewall):
         p_value_set = re.compile('^\s*set\s+(?P<key>\S+)\s+(?P<value>.*)$', re.IGNORECASE)
         p_next = re.compile('^next$', re.IGNORECASE)
         services_section = re.search("config firewall service custom[\s\S]+?end", self.backup_config).group(0)
-        service_elem = {}
+        service_elem = {'extra_info': {}}
         service_list = []
         in_block = False
         for line in services_section.splitlines():
@@ -285,11 +262,13 @@ class FortigateFirewall(Firewall):
                                 parsed_port_range['dst-port-max'] = int(max_port)
                             ports.append(parsed_port_range)
                         value = ports
-                    service_elem[key] = value
+                        service_elem[key] = value
+                    else:
+                        service_elem['extra_info'][key] = value
 
                 if p_next.search(line):
                     service_list.append(service_elem)
-                    service_elem = {}
+                    service_elem = {'extra_info': {}}
             if p_exiting_block.search(line):
                 in_group_block = False
 

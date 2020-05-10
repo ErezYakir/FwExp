@@ -41,12 +41,12 @@ class Firewall(object):
 
     """
 
-    def __init__(self, ip, user, pwd, db_path):
+    def __init__(self, ip, user, pwd, db_path, db_name="Firewall_info"):
         self.ip = ip
         self.user = user
         self.pwd = pwd
         self.conn = pymongo.MongoClient(db_path)
-        self.cursor = self.conn["Firewall_info"]
+        self.cursor = self.conn[db_name]
         self.policy_col = self.cursor['policy']
         self.address_objects_col = self.cursor['addresses']
         self.service_objects_col = self.cursor['services']

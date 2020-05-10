@@ -25,16 +25,15 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="Added Analysis function of retrieving all objects that contain a given ip address">
-      <change afterPath="$PROJECT_DIR$/firewall/networkobject.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/firewall/ruleobject.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/firewall/serviceobject.py" afterDir="false" />
+    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="Added classes for rules, addresses, services">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/analyzer/analyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoint_config_files/Network-Management server.json" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoint_config_files/Network-Management server.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoint_config_files/Standard_objects.json" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoint_config_files/Standard_objects.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bkp.tmp" beforeDir="false" afterPath="$PROJECT_DIR$/bkp.tmp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/firewall/checkpointfirewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/checkpointfirewall.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/firewall/firewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/firewall.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/firewall/fortigatefirewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/fortigatefirewall.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/firewall/networkobject.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/networkobject.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/firewall/ruleobject.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/ruleobject.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/firewall/serviceobject.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/serviceobject.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -212,7 +211,14 @@
       <option name="project" value="LOCAL" />
       <updated>1588800807348</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Added classes for rules, addresses, services">
+      <created>1589100555481</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1589100555481</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -253,7 +259,8 @@
     <MESSAGE value="added a collection of address-objects and filled it with known objects, started a new collection of service-objects" />
     <MESSAGE value="Finished inserting some of the objects of checkpoint into mongoDB. currently three collections: policy, addresses, services. Now gonna try to rewrite fortigate to insert into same collections" />
     <MESSAGE value="Added Analysis function of retrieving all objects that contain a given ip address" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Analysis function of retrieving all objects that contain a given ip address" />
+    <MESSAGE value="Added classes for rules, addresses, services" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added classes for rules, addresses, services" />
   </component>
   <component name="WindowStateProjectService">
     <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1588579559109">
@@ -264,38 +271,38 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="785" y="414" key="#xdebugger.evaluate/0.0.1920.1160@0.0.1920.1160" timestamp="1588668065035" />
-    <state width="1899" height="303" key="GridCell.Tab.0.bottom" timestamp="1588873102185">
+    <state width="1899" height="303" key="GridCell.Tab.0.bottom" timestamp="1589113091263">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="303" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1588873102185" />
-    <state width="1899" height="303" key="GridCell.Tab.0.center" timestamp="1588873102185">
+    <state width="1899" height="303" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1589113091263" />
+    <state width="1899" height="303" key="GridCell.Tab.0.center" timestamp="1589113091263">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="303" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1588873102185" />
-    <state width="1899" height="303" key="GridCell.Tab.0.left" timestamp="1588873102185">
+    <state width="1899" height="303" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1589113091263" />
+    <state width="1899" height="303" key="GridCell.Tab.0.left" timestamp="1589113091263">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="303" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1588873102185" />
-    <state width="1899" height="303" key="GridCell.Tab.0.right" timestamp="1588873102185">
+    <state width="1899" height="303" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1589113091263" />
+    <state width="1899" height="303" key="GridCell.Tab.0.right" timestamp="1589113091263">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="303" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1588873102185" />
-    <state width="1899" height="420" key="GridCell.Tab.1.bottom" timestamp="1588873102181">
+    <state width="1899" height="303" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1589113091263" />
+    <state width="1899" height="420" key="GridCell.Tab.1.bottom" timestamp="1589111629851">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="420" key="GridCell.Tab.1.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1588873102181" />
-    <state width="1899" height="420" key="GridCell.Tab.1.center" timestamp="1588873102181">
+    <state width="1899" height="420" key="GridCell.Tab.1.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1589111629851" />
+    <state width="1899" height="420" key="GridCell.Tab.1.center" timestamp="1589111629851">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="420" key="GridCell.Tab.1.center/0.0.1920.1160@0.0.1920.1160" timestamp="1588873102181" />
-    <state width="1899" height="420" key="GridCell.Tab.1.left" timestamp="1588873102181">
+    <state width="1899" height="420" key="GridCell.Tab.1.center/0.0.1920.1160@0.0.1920.1160" timestamp="1589111629851" />
+    <state width="1899" height="420" key="GridCell.Tab.1.left" timestamp="1589111629851">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="420" key="GridCell.Tab.1.left/0.0.1920.1160@0.0.1920.1160" timestamp="1588873102181" />
-    <state width="1899" height="420" key="GridCell.Tab.1.right" timestamp="1588873102181">
+    <state width="1899" height="420" key="GridCell.Tab.1.left/0.0.1920.1160@0.0.1920.1160" timestamp="1589111629851" />
+    <state width="1899" height="420" key="GridCell.Tab.1.right" timestamp="1589111629851">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="420" key="GridCell.Tab.1.right/0.0.1920.1160@0.0.1920.1160" timestamp="1588873102181" />
+    <state width="1899" height="420" key="GridCell.Tab.1.right/0.0.1920.1160@0.0.1920.1160" timestamp="1589111629851" />
     <state x="681" y="321" width="540" height="524" key="StructurePopup" timestamp="1588582033039">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -304,10 +311,14 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1588800817513" />
-    <state width="968" height="588" key="XDebugger.FullValuePopup" timestamp="1588598555078">
+    <state width="968" height="588" key="XDebugger.FullValuePopup" timestamp="1589110080229">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="968" height="588" key="XDebugger.FullValuePopup/0.0.1920.1160@0.0.1920.1160" timestamp="1588598555078" />
+    <state width="968" height="588" key="XDebugger.FullValuePopup/0.0.1920.1160@0.0.1920.1160" timestamp="1589110080229" />
+    <state x="524" y="309" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1589110829742">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="524" y="309" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1160@0.0.1920.1160" timestamp="1589110829742" />
     <state x="623" y="255" width="672" height="678" key="search.everywhere.popup" timestamp="1588583809836">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -317,34 +328,34 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>10</line>
+          <option name="timeStamp" value="109" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/firewall/firewall.py</url>
+          <line>65</line>
+          <option name="timeStamp" value="110" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/firewall/firewall.py</url>
+          <line>72</line>
+          <option name="timeStamp" value="113" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/firewall/firewall.py</url>
+          <line>61</line>
+          <option name="timeStamp" value="115" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/firewall/fortigatefirewall.py</url>
-          <line>170</line>
-          <option name="timeStamp" value="47" />
+          <line>144</line>
+          <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/firewall/fortigatefirewall.py</url>
-          <line>169</line>
-          <option name="timeStamp" value="65" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>9</line>
-          <option name="timeStamp" value="91" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>14</line>
-          <option name="timeStamp" value="94" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>11</line>
-          <option name="timeStamp" value="101" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/firewall/checkpointfirewall.py</url>
-          <line>85</line>
-          <option name="timeStamp" value="105" />
+          <line>127</line>
+          <option name="timeStamp" value="119" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
