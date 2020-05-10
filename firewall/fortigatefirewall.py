@@ -295,6 +295,8 @@ class FortigateFirewall(Firewall):
 
         return service_list
 
+    #def _parse
+
     def _get_service_groups(self):
         pass
 

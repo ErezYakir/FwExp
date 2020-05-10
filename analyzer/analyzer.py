@@ -34,21 +34,20 @@ class analyzer(object):
         # Go over each group object
         group_results = []
         for group in self.address_objects_col.find({'members.0': {"$exists": True}}):
-            child_ids = self._get_all_child_ids_recursively(group, 'id')
+            child_ids = self._get_all_child_ids_recursively(group)
             if any(child in results for child in child_ids):
                 group_results.append(group['id'])
 
         results.extend(group_results)
         return utils.remove_duplicates(results)
 
-
-    def _get_all_child_ids_recursively(self, parent, property):
+    def _get_all_child_ids_recursively(self, parent):
         members = parent.get('members')
         if not members:
-            return [parent[property]]
-        result = [parent[property]]
+            return [parent['id']]
+        result = [parent['id']]
         for child in members:
-            result.extend(self._get_all_child_ids_recursively(self._get_obj_by_id(child), property))
+            result.extend(self._get_all_child_ids_recursively(self._get_obj_by_id(child)))
         return utils.remove_duplicates(result)
 
     def _get_obj_by_name(self, name):
@@ -57,4 +56,7 @@ class analyzer(object):
     def _get_obj_by_id(self, id):
         return self.address_objects_col.find_one({'id': id})
 
+    def _find_rules_containing_address(self, address_id):
+        for rule in self.policy_col.find().sort('priority', pymongo.DESCENDING):
+            pass
 

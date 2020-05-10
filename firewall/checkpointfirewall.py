@@ -12,7 +12,8 @@ class CheckpointFirewall(Firewall):
                               'CpmiLogicalServer', 'Global', 'security-zone', 'Track', 'threat-profile',
                               'ThreatExceptionRulebase', 'host', 'CpmiAnyObject', 'group', 'wildcard', 'network',
                                 'address-range', 'service-udp', 'service-dce-rpc', 'service-icmp', 'service-rpc',
-                                'CpmiSrCommunity', 'service-group']
+                                'CpmiSrCommunity', 'service-group', 'CpmiVoipGwDomain', 'CpmiVoipSkinnyDomain',
+                                'CpmiVoipSipDomain', 'dynamic-object', 'group-with-exclusion', 'multicast-address-range']
 
     def fetch(self):
         # TODO: fetch from http / ssh

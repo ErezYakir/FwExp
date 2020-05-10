@@ -11,7 +11,7 @@ try:
     #my_obj = m_analyzer._get_obj_by_name("ipgroup3")
     #childs = m_analyzer._get_all_child_ids_recursively(my_obj)
     a = m_analyzer._get_address_objects_of_ip("1.1.1.1")
-
+    m_analyzer._get_rules_sorted()
     print('a')
     #m_analyzer.get_one_hop('1.1.1.1', '2.2.2.2')
 
