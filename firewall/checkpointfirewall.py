@@ -1,12 +1,15 @@
-import requests
+import re
 import uuid
 from .firewall import Firewall
 import ipaddress
 import json
+from .ssh_client import RemoteClient
+import shutil
+import os
 
 
 class CheckpointFirewall(Firewall):
-    def __init__(self, ip, user, pwd, db_path, db_name="Firewall_info"):
+    def __init__(self, ip, user, pwd, db_path, db_name="Firewall_info", port=22):
         super().__init__(ip, user, pwd, db_path, db_name)
         self.known_obj_types = ['vpn-community-meshed', 'dns-domain', 'RulebaseAction', 'service-tcp',
                               'CpmiLogicalServer', 'Global', 'security-zone', 'Track', 'threat-profile',
@@ -14,9 +17,24 @@ class CheckpointFirewall(Firewall):
                                 'address-range', 'service-udp', 'service-dce-rpc', 'service-icmp', 'service-rpc',
                                 'CpmiSrCommunity', 'service-group', 'CpmiVoipGwDomain', 'CpmiVoipSkinnyDomain',
                                 'CpmiVoipSipDomain', 'dynamic-object', 'group-with-exclusion', 'multicast-address-range']
+        self.port = port
 
-    def fetch(self):
-        # TODO: fetch from http / ssh
+    def fetch(self, fetch_remotely=True):
+        if fetch_remotely:
+            #shutil.rmtree('checkpoint_config_files')
+            #os.mkdir('checkpoint_config_files')
+            remote = RemoteClient(self.ip, self.user, self.pwd, self.port)
+            response = remote.execute_command(
+                '$MDS_FWDIR/scripts/web_api_show_package.sh -g {} -u {} -p {}'.format('test', self.user, self.pwd)
+            )
+            if 'successfully' not in response[0]:
+                raise Exception('Could not export checkpoint configuration.')
+            result_path = re.search('Result file location:\s(.+)', response[1]).group(1)
+            remote.download_file(result_path, 'checkpoint_config_files')
+            import tarfile
+            tf = tarfile.open("checkpoint_config_files/{}".format(result_path))
+            tf.extractall('checkpoint_config_files')
+
         with open('checkpoint_config_files/Standard_objects.json', 'r') as f:
             self.checkpoint_objects = json.loads(f.read())
         with open('checkpoint_config_files/Network-Management server.json', 'r') as f:

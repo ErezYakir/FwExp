@@ -25,12 +25,13 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="Added Extra Info for each object">
+    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="Added little bit of analysis and ugly gui">
+      <change afterPath="$PROJECT_DIR$/firewall/ssh_client.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/analyzer/analyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint_config_files/Network-Management server.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint_config_files/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint_config_files/Standard_objects.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/firewall/checkpointfirewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/checkpointfirewall.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/firewall/firewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/firewall.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/firewall/fortigatefirewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/fortigatefirewall.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -222,7 +223,14 @@
       <option name="project" value="LOCAL" />
       <updated>1589113206666</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Added little bit of analysis and ugly gui">
+      <created>1589181525200</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1589181525200</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -265,7 +273,8 @@
     <MESSAGE value="Added Analysis function of retrieving all objects that contain a given ip address" />
     <MESSAGE value="Added classes for rules, addresses, services" />
     <MESSAGE value="Added Extra Info for each object" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Extra Info for each object" />
+    <MESSAGE value="Added little bit of analysis and ugly gui" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added little bit of analysis and ugly gui" />
   </component>
   <component name="WindowStateProjectService">
     <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1588579559109">
@@ -276,46 +285,46 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="785" y="414" key="#xdebugger.evaluate/0.0.1920.1160@0.0.1920.1160" timestamp="1588668065035" />
-    <state width="1899" height="287" key="GridCell.Tab.0.bottom" timestamp="1589181371408">
+    <state width="1899" height="420" key="GridCell.Tab.0.bottom" timestamp="1589185741951">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="287" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1589181371408" />
-    <state width="1899" height="287" key="GridCell.Tab.0.center" timestamp="1589181371408">
+    <state width="1899" height="420" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1589185741951" />
+    <state width="1899" height="420" key="GridCell.Tab.0.center" timestamp="1589185741951">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="287" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1589181371408" />
-    <state width="1899" height="287" key="GridCell.Tab.0.left" timestamp="1589181371408">
+    <state width="1899" height="420" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1589185741951" />
+    <state width="1899" height="420" key="GridCell.Tab.0.left" timestamp="1589185741951">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="287" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1589181371408" />
-    <state width="1899" height="287" key="GridCell.Tab.0.right" timestamp="1589181371408">
+    <state width="1899" height="420" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1589185741951" />
+    <state width="1899" height="420" key="GridCell.Tab.0.right" timestamp="1589185741951">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="287" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1589181371408" />
-    <state width="1899" height="420" key="GridCell.Tab.1.bottom" timestamp="1589181210484">
+    <state width="1899" height="420" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1589185741951" />
+    <state width="1899" height="420" key="GridCell.Tab.1.bottom" timestamp="1589185743089">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="420" key="GridCell.Tab.1.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1589181210484" />
-    <state width="1899" height="420" key="GridCell.Tab.1.center" timestamp="1589181210484">
+    <state width="1899" height="420" key="GridCell.Tab.1.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1589185743089" />
+    <state width="1899" height="420" key="GridCell.Tab.1.center" timestamp="1589185743089">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="420" key="GridCell.Tab.1.center/0.0.1920.1160@0.0.1920.1160" timestamp="1589181210484" />
-    <state width="1899" height="420" key="GridCell.Tab.1.left" timestamp="1589181210484">
+    <state width="1899" height="420" key="GridCell.Tab.1.center/0.0.1920.1160@0.0.1920.1160" timestamp="1589185743089" />
+    <state width="1899" height="420" key="GridCell.Tab.1.left" timestamp="1589185743088">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="420" key="GridCell.Tab.1.left/0.0.1920.1160@0.0.1920.1160" timestamp="1589181210484" />
-    <state width="1899" height="420" key="GridCell.Tab.1.right" timestamp="1589181210484">
+    <state width="1899" height="420" key="GridCell.Tab.1.left/0.0.1920.1160@0.0.1920.1160" timestamp="1589185743088" />
+    <state width="1899" height="420" key="GridCell.Tab.1.right" timestamp="1589185743089">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="420" key="GridCell.Tab.1.right/0.0.1920.1160@0.0.1920.1160" timestamp="1589181210484" />
+    <state width="1899" height="420" key="GridCell.Tab.1.right/0.0.1920.1160@0.0.1920.1160" timestamp="1589185743089" />
     <state x="681" y="321" width="540" height="524" key="StructurePopup" timestamp="1588582033039">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="681" y="321" width="540" height="524" key="StructurePopup/0.0.1920.1160@0.0.1920.1160" timestamp="1588582033039" />
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1588800817513">
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1589181536572">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1588800817513" />
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1589181536572" />
     <state width="968" height="588" key="XDebugger.FullValuePopup" timestamp="1589110080229">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -349,12 +358,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>24</line>
+          <line>27</line>
           <option name="timeStamp" value="126" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>27</line>
+          <line>30</line>
           <option name="timeStamp" value="127" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -371,6 +380,11 @@
           <url>file://$PROJECT_DIR$/analyzer/analyzer.py</url>
           <line>74</line>
           <option name="timeStamp" value="130" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/firewall/checkpointfirewall.py</url>
+          <line>26</line>
+          <option name="timeStamp" value="131" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Title</title>
+    <style>
+        body {
+            font-family: "Helvetica", sans-serif;
+        }
+
+        table {
+            border-collapse: collapse;
+            font-family: "Courier", monospace;
+            border-style: hidden;
+            width: 100%;
+        }
+
+        td {
+            border: 1px solid Gray;
+            vertical-align: text-top;
+            padding: 6px;
+        }
+
+        .key {
+            color: DarkRed;
+            font-weight: bold;
+        }
+
+        .number_value {
+            color: DarkBlue;
+        }
+
+        .string_value {
+            color: Blue;
+        }
+
+        .object_value {
+            padding: 0;
+        }
+
+        .array_item {
+            color: Green;
+        }
+
+        .main_table {
+            border: 1px solid gray;
+            width: auto;
+        }
+
+        .object_link {
+            text-decoration: none;
+            color: blue;
+        }
+
+        .object_link:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <script>
+        // this part of the page is generated dynamically in the Java code by using the Check Point management APIs
+
+		var data = [{"comments":"","ike-phase-2":{"encryption-algorithm":"aes-128","data-integrity":"sha1"},"color":"black","ike-phase-1":{"encryption-algorithm":"aes-256","diffie-hellman-group":"group-2","data-integrity":"sha1"},"icon":"VPNCommunities\/Star","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-10T13:20+0000","posix":1589116853898},"creation-time":{"iso-8601":"2020-05-10T13:20+0000","posix":1589116853898},"lock":"unlocked","last-modifier":"admin"},"encryption-method":"ikev1 for ipv4 and ikev2 for ipv6 only","type":"vpn-community-star","center-gateways":[{"comments":"","color":"black","customFields":null,"meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:20+0000","posix":1588670458872},"creation-time":{"iso-8601":"2020-05-05T09:20+0000","posix":1588670458872},"last-modifier":"admin"},"icon":"NetworkObjects\/gateway","type":"CpmiGatewayPlain","tags":[],"ipv6-address":"","uid":"1c140b38-fa3b-467d-b138-e0eda1c8e171","natSummaryText":"None","ipv4-address":"16.13.12.11","display-name":"","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"interop1"}],"tags":[],"use-shared-secret":false,"uid":"57295a3b-4419-4be6-a753-cb4a171aa316","satellite-gateways":[],"domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"vpntest2","encryption-suite":"custom","read-only":false,"mesh-center-gateways":false},{"gateways":[],"comments":"","ike-phase-2":{"encryption-algorithm":"aes-128","data-integrity":"sha1"},"color":"black","ike-phase-1":{"encryption-algorithm":"aes-256","diffie-hellman-group":"group-2","data-integrity":"sha1"},"icon":"VPNCommunities\/Meshed","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:14+0000","posix":1554686069698},"creation-time":{"iso-8601":"2019-04-08T01:14+0000","posix":1554686069698},"lock":"unlocked","last-modifier":"System"},"encryption-method":"ikev1 for ipv4 and ikev2 for ipv6 only","type":"vpn-community-meshed","tags":[],"use-shared-secret":false,"uid":"d46fdeaa-d87e-4d8c-a74e-520277a11d91","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"MyIntranet","encryption-suite":"custom","read-only":false},{"shared-secrets":[{"external-gateway":{"comments":"","color":"black","customFields":null,"meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:20+0000","posix":1588670458872},"creation-time":{"iso-8601":"2020-05-05T09:20+0000","posix":1588670458872},"last-modifier":"admin"},"icon":"NetworkObjects\/gateway","type":"CpmiGatewayPlain","tags":[],"ipv6-address":"","uid":"1c140b38-fa3b-467d-b138-e0eda1c8e171","natSummaryText":"None","ipv4-address":"16.13.12.11","display-name":"","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"interop1"}}],"gateways":[{"comments":"","color":"black","customFields":null,"meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:20+0000","posix":1588670458872},"creation-time":{"iso-8601":"2020-05-05T09:20+0000","posix":1588670458872},"last-modifier":"admin"},"icon":"NetworkObjects\/gateway","type":"CpmiGatewayPlain","tags":[],"ipv6-address":"","uid":"1c140b38-fa3b-467d-b138-e0eda1c8e171","natSummaryText":"None","ipv4-address":"16.13.12.11","display-name":"","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"interop1"}],"comments":"","ike-phase-2":{"encryption-algorithm":"aes-128","data-integrity":"sha1"},"color":"black","ike-phase-1":{"encryption-algorithm":"aes-256","diffie-hellman-group":"group-2","data-integrity":"sha1"},"icon":"VPNCommunities\/Meshed","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-10T13:21+0000","posix":1589116906089},"creation-time":{"iso-8601":"2020-05-10T12:44+0000","posix":1589114683832},"lock":"unlocked","last-modifier":"admin"},"encryption-method":"ikev1 for ipv4 and ikev2 for ipv6 only","type":"vpn-community-meshed","tags":[],"use-shared-secret":true,"uid":"d1717846-eeb5-4c65-8875-5fd8f977850c","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"vpntest1","encryption-suite":"custom","read-only":false},{"uid":"f5efa7ba-c9d1-40d8-a6cf-9934ee2e5ec7","comments":"","color":"black","is-sub-domain":false,"domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":".erez.fqdn","icon":"Objects\/domain","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-07T13:21+0000","posix":1588857713372},"creation-time":{"iso-8601":"2020-05-07T13:21+0000","posix":1588857713372},"lock":"unlocked","last-modifier":"admin"},"type":"dns-domain","read-only":false,"tags":[]},{"uid":"4084f737-1aac-4a32-a672-e34ddbe0a763","comments":"","color":"black","is-sub-domain":false,"domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":".google.com","icon":"Objects\/domain","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:21+0000","posix":1588670492576},"creation-time":{"iso-8601":"2020-05-05T09:21+0000","posix":1588670492576},"lock":"unlocked","last-modifier":"admin"},"type":"dns-domain","read-only":false,"tags":[]},{"nat-settings":{"auto-rule":false},"interfaces":[{"uid":"c84cbaef-5aa8-44dd-9f07-3346ec77ccdd","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"new_eth","icon":"Unknown","subnet-mask":"255.255.255.0","subnet4":"5.5.5.0","type":"CpmiInterface","mask-length4":24,"tags":[]}],"comments":"","color":"black","icon":"Objects\/host","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-07T06:33+0000","posix":1588833192149},"creation-time":{"iso-8601":"2020-05-07T06:33+0000","posix":1588833192149},"lock":"unlocked","last-modifier":"admin"},"type":"host","tags":[],"uid":"28bd293f-7bb6-42a9-8120-d18a1b99cde6","ipv4-address":"1.1.1.8","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"a123","read-only":false},{"uid":"6c488338-8eec-4103-ad21-cd461ac2c472","comments":"Accept","color":"none","display-name":"Accept","customFields":null,"domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"Accept","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769801},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769801},"last-modifier":"System"},"icon":"Actions\/actionsAccept","type":"RulebaseAction","tags":[]},{"nat-settings":{"auto-rule":false},"interfaces":[],"comments":"","color":"black","icon":"Objects\/host","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:15+0000","posix":1588670135094},"creation-time":{"iso-8601":"2020-05-05T09:15+0000","posix":1588670135094},"lock":"unlocked","last-modifier":"admin"},"type":"host","tags":[],"uid":"07512340-8b22-4d93-bb8f-373ae0c1e85c","ipv4-address":"12.5.6.8","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"another_host","read-only":false},{"uid":"97aeb369-9aea-11d5-bd16-0090272ccb30","comments":null,"color":"black","display-name":"","customFields":null,"domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"Any","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:08+0000","posix":1554685737997},"creation-time":{"iso-8601":"2019-04-08T01:08+0000","posix":1554685737997},"last-modifier":"System"},"icon":"General\/globalsAny","type":"CpmiAnyObject","tags":[]},{"session-timeout":40,"use-default-session-timeout":true,"comments":"Uses MANOLITO protocol","color":"black","match-for-any":true,"aggressive-aging":{"enable":true,"default-timeout":0,"use-default-timeout":true,"timeout":15},"keep-connections-open-after-policy-installation":false,"icon":"Services\/UDPService","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685759646},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685759646},"lock":"unlocked","last-modifier":"System"},"sync-connections-on-cluster":true,"type":"service-udp","tags":[],"uid":"c86f055d-31ad-4430-b12c-1094a86c673c","match-by-protocol-signature":false,"accept-replies":true,"port":"41170","domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"Blubster","override-default-settings":false,"read-only":false},{"uid":"0614b783-665c-454a-b26e-ff6a68695f83","interface-uuid":"282a5300-8f70-11ea-bc55-0242ac130003","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"keep-connections-open-after-policy-installation":false,"name":"dcerpc1","icon":"Services\/DCEService","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-06T08:04+0000","posix":1588752247456},"creation-time":{"iso-8601":"2020-05-06T08:04+0000","posix":1588752247456},"lock":"unlocked","last-modifier":"admin"},"type":"service-dce-rpc","read-only":false,"tags":[]},{"uid":"6c488338-8eec-4103-ad21-cd461ac2c473","comments":"Drop","color":"none","display-name":"Drop","customFields":null,"domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"Drop","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769807},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769807},"last-modifier":"System"},"icon":"Actions\/actionsDrop","type":"RulebaseAction","tags":[]},{"broadcast":"allow","nat-settings":{"auto-rule":false},"comments":"","color":"black","icon":"NetworkObjects\/network","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:14+0000","posix":1588670045503},"creation-time":{"iso-8601":"2020-05-05T09:14+0000","posix":1588670045503},"lock":"unlocked","last-modifier":"admin"},"subnet-mask":"255.255.0.0","type":"network","tags":[],"uid":"7be095f3-37da-4973-b1c7-cdfd03b96369","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"erez","subnet4":"192.54.0.0","mask-length4":16,"read-only":false},{"uid":"966d5e5d-7715-4a9f-b719-ef820fc8dcf6","comments":"","color":"black","display-name":"","customFields":null,"domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"erez_h323_gw","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-07T13:23+0000","posix":1588857799743},"creation-time":{"iso-8601":"2020-05-07T13:23+0000","posix":1588857799743},"last-modifier":"admin"},"icon":"NetworkObjects\/VoIPGateway","type":"CpmiVoipGwDomain","tags":[]},{"uid":"49fd318e-38f6-448e-bfd6-29715d463e31","comments":"","color":"black","display-name":"","customFields":null,"domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"erez_sccp_mge","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-07T13:25+0000","posix":1588857935732},"creation-time":{"iso-8601":"2020-05-07T13:25+0000","posix":1588857935732},"last-modifier":"admin"},"icon":"NetworkObjects\/VoIPSCCPCallManager","type":"CpmiVoipSkinnyDomain","tags":[]},{"uid":"2b7a22a5-da49-4efb-ba8b-23d71a9cfc68","comments":"","color":"black","display-name":"","customFields":null,"domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"erez_sip_proxu","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-07T13:22+0000","posix":1588857748464},"creation-time":{"iso-8601":"2020-05-07T13:22+0000","posix":1588857748464},"last-modifier":"admin"},"icon":"NetworkObjects\/VoIPSIP","type":"CpmiVoipSipDomain","tags":[]},{"uid":"2c6bc7f5-1a9c-45d6-80a7-226d7b558426","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"erezdynamic1","icon":"NetworkObjects\/dynamicObject","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-07T13:17+0000","posix":1588857474274},"creation-time":{"iso-8601":"2020-05-07T13:17+0000","posix":1588857474274},"lock":"unlocked","last-modifier":"admin"},"type":"dynamic-object","read-only":false,"tags":[]},{"uid":"87a485cb-1472-4557-9ab5-a4458af744da","include":{"uid":"8462076b-9f96-4dbd-8fc6-fdc281853a0c","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"members":["7be095f3-37da-4973-b1c7-cdfd03b96369","07512340-8b22-4d93-bb8f-373ae0c1e85c","dc2ece76-d117-43cb-8d65-bd9230660a8e","5aa2e598-aea1-4291-847b-530e7a31b3c3"],"name":"groupc","icon":"General\/group","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:16+0000","posix":1588670163860},"creation-time":{"iso-8601":"2020-05-05T09:16+0000","posix":1588670163860},"lock":"unlocked","last-modifier":"admin"},"type":"group","read-only":false,"tags":[]},"comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"erezgroupexclusion","icon":"General\/group","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-07T13:13+0000","posix":1588857231752},"creation-time":{"iso-8601":"2020-05-07T13:13+0000","posix":1588857231752},"lock":"unlocked","last-modifier":"admin"},"except":{"uid":"4a8aef26-8269-4f1f-91e1-3595607939f6","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"members":[],"name":"servg1","icon":"General\/group","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:22+0000","posix":1588670546156},"creation-time":{"iso-8601":"2020-05-05T09:22+0000","posix":1588670546156},"lock":"unlocked","last-modifier":"admin"},"type":"group","read-only":false,"tags":[]},"type":"group-with-exclusion","read-only":false,"tags":[]},{"uid":"e85349d9-a352-4114-b322-fbb9521a422f","comments":"","color":"black","ipv4-address-last":"239.255.255.255","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"erezmulticast1","icon":"Objects\/ip","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-07T13:17+0000","posix":1588857451452},"creation-time":{"iso-8601":"2020-05-07T13:17+0000","posix":1588857451452},"lock":"unlocked","last-modifier":"admin"},"type":"multicast-address-range","read-only":false,"ipv4-address-first":"239.255.255.255","tags":[]},{"uid":"8462076b-9f96-4dbd-8fc6-fdc281853a0c","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"members":["7be095f3-37da-4973-b1c7-cdfd03b96369","07512340-8b22-4d93-bb8f-373ae0c1e85c","dc2ece76-d117-43cb-8d65-bd9230660a8e","5aa2e598-aea1-4291-847b-530e7a31b3c3"],"name":"groupc","icon":"General\/group","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:16+0000","posix":1588670163860},"creation-time":{"iso-8601":"2020-05-05T09:16+0000","posix":1588670163860},"lock":"unlocked","last-modifier":"admin"},"type":"group","read-only":false,"tags":[]},{"session-timeout":3600,"use-default-session-timeout":true,"comments":"","color":"black","match-for-any":true,"aggressive-aging":{"enable":true,"default-timeout":0,"use-default-timeout":true,"timeout":600},"keep-connections-open-after-policy-installation":false,"icon":"Services\/TCPService","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:33+0000","posix":1588671217582},"creation-time":{"iso-8601":"2020-05-05T09:33+0000","posix":1588671217582},"lock":"unlocked","last-modifier":"admin"},"sync-connections-on-cluster":true,"type":"service-tcp","tags":[],"uid":"e5113c1c-3c92-453c-a25d-447bc9c955cf","protocol":"HTTP","match-by-protocol-signature":false,"port":"12435","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"http12435","override-default-settings":false,"read-only":false},{"session-timeout":3600,"use-default-session-timeout":true,"comments":"HTTP protocol over TLS\/SSL","color":"red","match-for-any":true,"aggressive-aging":{"enable":true,"default-timeout":60,"use-default-timeout":false,"timeout":60},"keep-connections-open-after-policy-installation":false,"icon":"Services\/TCPService","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685758689},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685758689},"lock":"unlocked","last-modifier":"System"},"sync-connections-on-cluster":true,"type":"service-tcp","tags":[],"uid":"97aeb443-9aea-11d5-bd16-0090272ccb30","protocol":"ENC-HTTP","match-by-protocol-signature":false,"port":"443","domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"https","override-default-settings":false,"read-only":false},{"comments":"","color":"black","keep-connections-open-after-policy-installation":false,"icon":"Services\/ICMPService","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-06T08:04+0000","posix":1588752263214},"creation-time":{"iso-8601":"2020-05-06T08:04+0000","posix":1588752263214},"lock":"unlocked","last-modifier":"admin"},"icmp-code":3,"type":"service-icmp","tags":[],"uid":"2f64637c-4ad3-464a-88ec-14822d7fb6c0","icmp-type":2,"domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"icmp1","read-only":false},{"uid":"598ead32-aa42-4615-90ed-f51a5928d41d","comments":"Tracks network information and rule matches.","color":"none","customFields":null,"domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"Log","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769525},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769525},"last-modifier":"System"},"icon":"Track\/tracksLog","type":"Track","tags":[]},{"uid":"f8c0ba7a-205e-4422-af8c-dad9647a9c8c","interface-uuid":"4e398db0-8f91-11ea-bc55-0242ac130003","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"keep-connections-open-after-policy-installation":false,"name":"my_rpc","icon":"Services\/DCEService","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-06T12:01+0000","posix":1588766481312},"creation-time":{"iso-8601":"2020-05-06T12:01+0000","posix":1588766481312},"lock":"unlocked","last-modifier":"admin"},"type":"service-dce-rpc","read-only":false,"tags":[]},{"uid":"29e53e3d-23bf-48fe-b6b1-d59bd88036f9","comments":"No tracking.","color":"none","customFields":null,"domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"None","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769491},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769491},"last-modifier":"System"},"icon":"General\/globalsNone","type":"Track","tags":[]},{"uid":"6c488338-8eec-4103-ad21-cd461ac2c476","comments":"The policy target gateways","color":"none","customFields":null,"domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"Policy Targets","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769366},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769366},"last-modifier":"System"},"icon":"General\/globalsAny","type":"Global","tags":[]},{"uid":"f3357cea-2d15-4ac2-a322-b144e3c5c7d2","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"keep-connections-open-after-policy-installation":true,"name":"rcp1","icon":"Services\/RPCService","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-06T08:03+0000","posix":1588752201569},"creation-time":{"iso-8601":"2020-05-06T08:03+0000","posix":1588752201569},"lock":"unlocked","last-modifier":"admin"},"type":"service-rpc","read-only":false,"program-number":2,"tags":[]},{"uid":"c258110e-c102-4e05-be15-159ad92cf89d","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"sec1","icon":"NetworkObjects\/zone","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:20+0000","posix":1588670427799},"creation-time":{"iso-8601":"2020-05-05T09:20+0000","posix":1588670427799},"lock":"unlocked","last-modifier":"admin"},"type":"security-zone","read-only":false,"tags":[]},{"uid":"4a8aef26-8269-4f1f-91e1-3595607939f6","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"members":[],"name":"servg1","icon":"General\/group","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:22+0000","posix":1588670546156},"creation-time":{"iso-8601":"2020-05-05T09:22+0000","posix":1588670546156},"lock":"unlocked","last-modifier":"admin"},"type":"group","read-only":false,"tags":[]},{"session-timeout":0,"use-default-session-timeout":true,"comments":"","color":"black","match-for-any":false,"aggressive-aging":{"enable":true,"default-timeout":0,"use-default-timeout":true,"timeout":0},"keep-connections-open-after-policy-installation":false,"icon":"Services\/TCPService","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685756928},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685756928},"lock":"unlocked","last-modifier":"System"},"sync-connections-on-cluster":true,"type":"service-tcp","tags":[],"uid":"fffa06a0-9d68-4dc1-980f-de16607f059d","protocol":"SMB","match-by-protocol-signature":false,"port":"445","domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"smb","override-default-settings":false,"read-only":false},{"session-timeout":3600,"use-default-session-timeout":true,"comments":"secure shell, encrypted and authenticated rsh","color":"red","match-for-any":true,"aggressive-aging":{"enable":true,"default-timeout":0,"use-default-timeout":true,"timeout":600},"keep-connections-open-after-policy-installation":false,"icon":"Services\/TCPService","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685755485},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685755485},"lock":"unlocked","last-modifier":"System"},"sync-connections-on-cluster":true,"type":"service-tcp","tags":[],"uid":"18ec9eaa-1657-4240-ab97-5f234623336b","match-by-protocol-signature":false,"port":"22","domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"ssh","override-default-settings":false,"read-only":false},{"uid":"23821465-4906-4f58-9ef2-b006955d846a","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"members":["97aeb44f-9aea-11d5-bd16-0090272ccb30","022f15c1-e593-45e7-9310-6ea96d8bd223"],"name":"svsg1","icon":"General\/group","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-06T08:17+0000","posix":1588753037165},"creation-time":{"iso-8601":"2020-05-06T08:05+0000","posix":1588752326725},"lock":"unlocked","last-modifier":"admin"},"type":"service-group","read-only":false,"tags":[]},{"nat-settings":{"auto-rule":false},"interfaces":[{"uid":"0be1c789-6586-411a-9c19-3d36bd82887b","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"a","icon":"Unknown","subnet-mask":"255.255.255.0","subnet4":"1.1.1.0","type":"CpmiInterface","mask-length4":24,"tags":[]}],"comments":"","color":"black","icon":"Objects\/host","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-04T15:42+0000","posix":1588606952346},"creation-time":{"iso-8601":"2020-05-03T17:52+0000","posix":1588528364917},"lock":"unlocked","last-modifier":"admin"},"type":"host","tags":[],"uid":"158123d7-6fea-4e2d-a3a5-5f7f142eba16","ipv4-address":"1.1.1.1","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"testip","read-only":false},{"nat-settings":{"ipv4-address":"192.168.1.5","method":"static","install-on":"All","auto-rule":true,"ipv6-address":""},"interfaces":[{"uid":"80a753f5-521f-496f-8087-e0bc2ad2f189","comments":"","color":"black","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"this_int","icon":"Unknown","subnet-mask":"255.255.255.0","subnet4":"192.168.1.0","type":"CpmiInterface","mask-length4":24,"tags":[]}],"comments":"","color":"black","icon":"Objects\/host","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T08:50+0000","posix":1588668609293},"creation-time":{"iso-8601":"2020-05-05T08:50+0000","posix":1588668609293},"lock":"unlocked","last-modifier":"admin"},"type":"host","tags":[],"uid":"dc2ece76-d117-43cb-8d65-bd9230660a8e","ipv4-address":"192.168.1.2","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"this_ip","read-only":false},{"session-timeout":40,"use-default-session-timeout":true,"comments":"","color":"black","match-for-any":true,"aggressive-aging":{"enable":true,"default-timeout":0,"use-default-timeout":true,"timeout":15},"keep-connections-open-after-policy-installation":false,"icon":"Services\/UDPService","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-06T08:02+0000","posix":1588752165949},"creation-time":{"iso-8601":"2020-05-06T08:02+0000","posix":1588752165949},"lock":"unlocked","last-modifier":"admin"},"sync-connections-on-cluster":true,"type":"service-udp","tags":[],"uid":"dc96afce-8202-4aed-8522-ac8a7bb5240a","match-by-protocol-signature":false,"accept-replies":true,"port":"12","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"udp1","override-default-settings":false,"read-only":false},{"uid":"49ce8565-985b-440b-b433-533546f3ed77","comments":"","ipv4-address":"172.168.0.5","color":"black","ipv4-mask-wildcard":"0.0.255.0","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"wildcardobj1","icon":"NetworkObjects\/WildcardObject","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-05T09:20+0000","posix":1588670411482},"creation-time":{"iso-8601":"2020-05-05T09:20+0000","posix":1588670411482},"lock":"unlocked","last-modifier":"admin"},"type":"wildcard","read-only":false,"tags":[]},{"uid":"97aeb368-9aea-11d5-bd16-0090272ccb30","comments":null,"color":"black","display-name":"","customFields":null,"domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"All","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:08+0000","posix":1554685737993},"creation-time":{"iso-8601":"2019-04-08T01:08+0000","posix":1554685737993},"last-modifier":"System"},"icon":"General\/globalsAny","type":"CpmiAnyObject","tags":[]},{"broadcast":"allow","nat-settings":{"method":"hide","hide-behind":"gateway","install-on":"All","auto-rule":true},"comments":"Used as a default for Office Mode. If deleted, it must be specified for each gateway individually (in the VPN Clients page Advanced section)","color":"black","icon":"NetworkObjects\/network","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:14+0000","posix":1554686096471},"creation-time":{"iso-8601":"2019-04-08T01:14+0000","posix":1554686096471},"lock":"unlocked","last-modifier":"System"},"subnet-mask":"255.255.255.0","type":"network","tags":[],"uid":"ae50a190-3808-4126-932b-5566369af531","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"CP_default_Office_Mode_addresses_pool","subnet4":"172.16.10.0","mask-length4":24,"read-only":false},{"uid":"85c0f50f-6d8a-4528-88ab-5fb11d8fe16c","comments":"This object was created automatically","color":"none","customFields":null,"domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"Original","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685770210},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685770210},"last-modifier":"System"},"icon":"NAT\/NatOriginal","type":"Global","tags":[]},{"uid":"6c488338-8eec-4103-ad21-cd461ac2c477","comments":"Log the connection","color":"none","customFields":null,"domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"Log","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769368},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685769368},"last-modifier":"System"},"icon":"Track\/tracksLog","type":"Global","tags":[]},{"malicious-mail-policy-settings":{"malicious-attachments-text":"Malicious email attachment '$filename$' removed by Check Point.","email-subject-prefix-text":"Attachment was found malicious. It is recommended not to open this mail.","add-customized-text-to-email-body":false,"malicious-links-text":"[Check Point] Malicious link: $neutralized_url$ [Check Point]","email-action":"allow","send-copy":false,"add-email-subject-prefix":false,"add-x-header-to-email":false,"email-body-customized-text":"[Check Point]<BR>The following verdicts were determined by Check Point:<BR>$verdicts$<BR>[Check Point]","remove-attachments-and-links":true,"failed-to-scan-attachments-text":"Email attachment '$filename$' failed to be scanned and removed by Check Point."},"color":"black","extended-attributes-to-deactivate":[{"uid":"eb5720e4-a7ae-fa44-91f4-af2f779e8aef","values":[{"uid":"221a358f-9f79-40e4-8ada-71b171d60cc7","name":"Rare"},{"uid":"cd6eb868-7c11-42fb-b47d-ca4d9212eb7b","name":"Obsolete"}],"name":"Threat Prevalence"}],"icon":"Profiles\/profile","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:08+0000","posix":1554685727654},"creation-time":{"iso-8601":"2019-04-08T01:08+0000","posix":1554685727654},"lock":"unlocked","last-modifier":"System"},"type":"threat-profile","confidence-level-medium":"Prevent","uid":"fa1aa324-a8cc-4dbd-bc04-f31fdb8abf61","anti-bot":true,"active-protections-severity":"Medium or above","ips-settings":{"exclude-protection-with-severity":false,"newly-updated-protections":"active","exclude-protection-with-performance-impact":false},"confidence-level-high":"Prevent","read-only":false,"threat-emulation":true,"use-indicators":true,"comments":"Provides excellent protection for all common network products and protocols against recent or popular attacks.","active-protections-performance-impact":"medium","overrides":[],"ips":true,"use-extended-attributes":true,"tags":[],"domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"extended-attributes-to-activate":[{"uid":"fa6e6f33-a2fb-f449-8809-fac2eba59c18","values":[{"uid":"eefa53c8-86ca-5c46-8d68-9a174a786de2","name":"Common"}],"name":"Product Prevalence"}],"name":"Optimized","indicator-overrides":[],"anti-virus":true,"confidence-level-low":"Detect"},{"uid":"7bd97336-f39a-41cc-af66-cd2d3a783ece","comments":"","color":"black","display-name":"","customFields":null,"domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"ThreatStandardSubRulebase","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:15+0000","posix":1554686114748},"creation-time":{"iso-8601":"2019-04-08T01:15+0000","posix":1554686114748},"last-modifier":"System"},"icon":"General\/globalsNa","type":"ThreatExceptionRulebase","tags":[]},{"nat-settings":{"auto-rule":false},"comments":"All Internet Addresses","color":"sienna","ipv4-address-last":"255.255.255.255","icon":"Objects\/ip","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:14+0000","posix":1554686096964},"creation-time":{"iso-8601":"2019-04-08T01:14+0000","posix":1554686096964},"lock":"unlocked","last-modifier":"System"},"type":"address-range","tags":[],"uid":"5aa2e598-aea1-4291-847b-530e7a31b3c3","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"All_Internet","ipv6-address-last":"","ipv6-address-first":"","read-only":false,"ipv4-address-first":"0.0.0.0"},{"session-timeout":3600,"use-default-session-timeout":true,"comments":"AOL Instant Messenger. Also used by: ICQ & Apple iChat","color":"red","match-for-any":true,"aggressive-aging":{"enable":true,"default-timeout":0,"use-default-timeout":true,"timeout":600},"keep-connections-open-after-policy-installation":false,"icon":"Services\/TCPService","meta-info":{"creator":"System","validation-state":"ok","last-modify-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685758865},"creation-time":{"iso-8601":"2019-04-08T01:09+0000","posix":1554685758865},"lock":"unlocked","last-modifier":"System"},"sync-connections-on-cluster":true,"type":"service-tcp","tags":[],"uid":"97aeb44f-9aea-11d5-bd16-0090272ccb30","match-by-protocol-signature":false,"port":"5190","domain":{"uid":"a0bbbc99-adef-4ef8-bb6d-defdefdefdef","domain-type":"data domain","name":"Check Point Data"},"name":"AOL","override-default-settings":false,"read-only":false},{"session-timeout":3600,"use-default-session-timeout":true,"comments":"","color":"black","match-for-any":true,"aggressive-aging":{"enable":true,"default-timeout":0,"use-default-timeout":true,"timeout":600},"keep-connections-open-after-policy-installation":false,"icon":"Services\/TCPService","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-06T08:02+0000","posix":1588752141848},"creation-time":{"iso-8601":"2020-05-06T08:02+0000","posix":1588752141848},"lock":"unlocked","last-modifier":"admin"},"sync-connections-on-cluster":true,"type":"service-tcp","tags":[],"uid":"022f15c1-e593-45e7-9310-6ea96d8bd223","protocol":"FTP","match-by-protocol-signature":false,"port":"21","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"tcp1","override-default-settings":false,"read-only":false}];
+
+        // end of dynamic content
+    </script>
+
+    <script>
+        var objectsMap = {};
+
+        var objects = {};
+
+        var keysOrderArray = ["uid", "name", "type", "domain", "ipv4-address", "ipv6-address", "subnet4", "subnet-mask", "mask-length4", "subnet6", "mask-length6", "port"];
+
+        function filterObjects(arr) {
+            var queryParams = getQueryParams();
+            return arr.filter(function (obj) {
+                var keep = true;
+                if (("type" in obj) && ("type" in queryParams)) keep = (queryParams["type"] === obj["type"]);
+                if ((keep) && ("uid" in obj) && ("uid" in queryParams)) keep = (queryParams["uid"] === obj["uid"]);
+                return keep;
+            });
+        }
+
+        function sortAndFilterObjects() {
+            data.forEach(function (o) {
+                if (o.uid) {
+                    objectsMap[o.uid] = o;
+                }
+            });
+
+            var filteredObjects = filterObjects(data);
+            objects = filteredObjects.sort(function (a, b) {
+                if (a.type == null && b.type == null) {
+                    return 0
+                }
+                if (a.type == null) {
+                    return 1
+                }
+                if (b.type == null) {
+                    return -1
+                }
+                return (a.type).localeCompare(b.type);
+            });
+        }
+
+        function printHeadline(txt) {
+            var headline = document.createElement("H1");
+            headline.appendChild(document.createTextNode("Type: " + txt));
+            document.body.appendChild(headline);
+        }
+
+        function printArray(arr, parentObject, level) {
+            if (arr.length === 0) {
+                parentObject.appendChild(document.createTextNode(" [Empty array]"));
+            }
+            var tableElement = document.createElement("table");
+            arr.forEach(function (elem, index) {
+                var rowElement = document.createElement("tr");
+                var indexElement = document.createElement("td");
+                indexElement.className = "array_item";
+                indexElement.appendChild(document.createTextNode("#" + index.toString()));
+                rowElement.appendChild(indexElement);
+
+                var valueElement = document.createElement("td");
+                printChildElement(elem, valueElement, level);
+                rowElement.appendChild(valueElement);
+                tableElement.appendChild(rowElement);
+            });
+            parentObject.appendChild(tableElement);
+        }
+
+        function printObject(obj, parentObject, level) {
+
+            if (typeof(obj) !== "object") {
+                parentObject.appendChild(generateValueNode(obj.toString()));
+                return;
+            }
+
+            var tableElement = document.createElement("table");
+            if (level === 0) {
+                tableElement.className = "main_table";
+            }
+
+            Object.keys(obj).sort(function (a, b) {
+                var aa = keysOrderArray.indexOf(a);
+                var bb = keysOrderArray.indexOf(b);
+                return aa !== -1 && bb !== -1 && aa - bb || aa !== -1 && -1 || bb !== -1 && 1 || a.localeCompare(b);
+            }).forEach(function (key) {
+                var rowElement = document.createElement("tr");
+                var keyElement = document.createElement("td");
+                keyElement.className = "key";
+                keyElement.appendChild(document.createTextNode(key + ":"));
+                rowElement.appendChild(keyElement);
+
+                var valueElement = document.createElement("td");
+                printChildElement(obj[key], valueElement, level);
+                rowElement.appendChild(valueElement);
+
+                tableElement.appendChild(rowElement);
+            });
+
+            parentObject.appendChild(tableElement);
+        }
+
+        function printChildElement(elem, parent, level) {
+            switch (Object.prototype.toString.call((elem))) {
+                case "[object Object]":
+                    parent.className = "object_value";
+                    printObject(elem, parent, level + 1);
+                    break;
+                case "[object Array]":
+                    parent.className = "object_value";
+                    printArray(elem, parent, level + 1);
+                    break;
+                default:
+                    parent.appendChild(generateValueNode(elem));
+            }
+        }
+
+        function printObjectTitle(obj) {
+            var headline = document.createElement("h3");
+            var anchor = document.createElement("a");
+
+            var txt = "UID: " + obj["uid"];
+            if ("name" in obj) {
+                txt = "Name: " + obj["name"];
+            }
+            anchor.setAttribute("name", obj["uid"]);
+            headline.appendChild(document.createTextNode(txt));
+            document.body.appendChild(anchor);
+            document.body.appendChild(headline);
+
+        }
+
+        function printAllObjects() {
+            sortAndFilterObjects();
+            document.title = "Package Objects";
+            var previousType = "";
+            objects.forEach(function (obj) {
+                if (obj.type !== previousType) {
+                    printHeadline(obj.type);
+                }
+
+                printObjectTitle(obj);
+                printObject(obj, document.body, 0);
+                document.body.appendChild(document.createElement("BR"));
+
+                previousType = obj.type;
+            });
+        }
+
+        var isUUID = function () {
+            var uuidRegEx = RegExp("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", "i");
+            return function (str) {
+                return uuidRegEx.test(str);
+            }
+        }();
+
+        var getLinkBase = function () {
+            var linkBase = "./" + document.location.pathname.split("/").splice(-1, 1) + "?uid=";
+            return function () {
+                return linkBase;
+            }
+        }();
+
+        var getQueryParams = function () {
+            var qs = document.location.search.split('+').join(' ');
+
+            var params = {},
+                tokens,
+                re = /[?&]?([^=]+)=([^&]*)/g;
+
+            while (tokens = re.exec(qs)) {
+                params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+            }
+
+            return function () {
+                return params;
+            };
+        }();
+
+        function generateValueNode(value) {
+            var valueNode;
+            if (isUUID(value) && objectsMap[value] && getQueryParams()["uid"] !== value) {
+                valueNode = document.createElement("a");
+                valueNode.className = "object_link";
+                valueNode.setAttribute("href", getLinkBase() + value);
+                valueNode.setAttribute("target", "_blank");
+                valueNode.appendChild(document.createTextNode(value));
+            } else {
+                valueNode = document.createTextNode(value)
+            }
+            return valueNode;
+        }
+    </script>
+
+</head>
+
+<body onload="printAllObjects()">
+
+</body>
+</html>

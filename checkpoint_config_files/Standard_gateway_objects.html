@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Title</title>
+    <style>
+        body {
+            font-family: "Helvetica", sans-serif;
+        }
+
+        table {
+            border-collapse: collapse;
+            font-family: "Courier", monospace;
+            border-style: hidden;
+            width: 100%;
+        }
+
+        td {
+            border: 1px solid Gray;
+            vertical-align: text-top;
+            padding: 6px;
+        }
+
+        .key {
+            color: DarkRed;
+            font-weight: bold;
+        }
+
+        .number_value {
+            color: DarkBlue;
+        }
+
+        .string_value {
+            color: Blue;
+        }
+
+        .object_value {
+            padding: 0;
+        }
+
+        .array_item {
+            color: Green;
+        }
+
+        .main_table {
+            border: 1px solid gray;
+            width: auto;
+        }
+
+        .object_link {
+            text-decoration: none;
+            color: blue;
+        }
+
+        .object_link:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <script>
+        // this part of the page is generated dynamically in the Java code by using the Check Point management APIs
+
+        var data = [{"interfaces":[{"ipv4-address":"10.2.0.4","ipv4-mask-length":24,"topology":{"security-zone":{"uid":"674379c9-ecff-46b8-b21c-e89cc6f885c5","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"name":"int1","type":"security-zone"},"leads-to-internet":true},"interface-name":"eth0","ipv4-network-mask":"255.255.255.0","dynamic-ip":false},{"ipv4-address":"10.2.1.4","ipv4-mask-length":24,"topology":{"leads-to-dmz":false,"ip-address-behind-this-interface":"network defined by the interface ip and net mask","leads-to-internet":false},"interface-name":"eth1","ipv4-network-mask":"255.255.255.0","dynamic-ip":false}],"comments":"","color":"black","operating-system":"Gaia","icon":"NetworkObjects\/gateway","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-10T13:16+0000","posix":1589116595745},"creation-time":{"iso-8601":"2020-05-07T13:46+0000","posix":1588859185979},"lock":"unlocked","last-modifier":"admin"},"groups":[],"type":"simple-gateway","vpn-encryption-domain":"addresses_behind_gw","version":"R80.30","tags":[],"uid":"384758b8-8c02-42b9-8f2e-339cd7394a02","management-blades":{},"ipv4-address":"10.2.0.4","domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"network-security-blades":{"firewall":true},"name":"test2","sic-status":"communicating","read-only":true,"policy":{"access-policy-revision":{"publish-time":{"iso-8601":"2020-05-07T14:20+0000","posix":1588861241491},"session-timeout":600,"comments":"","color":"black","expired-session":false,"changes":0,"icon":"Objects\/worksession","meta-info":{"creator":"admin","validation-state":"ok","last-modify-time":{"iso-8601":"2020-05-07T14:20+0000","posix":1588861241495},"creation-time":{"iso-8601":"2020-05-07T14:19+0000","posix":1588861192700},"lock":"unlocked","last-modifier":"admin"},"description":"","connection-mode":"read write with global lock","type":"session","in-work":false,"locks":0,"tags":[],"uid":"66035cd2-27cb-4fa2-b562-4c5b76868bcc","ip-address":"10.2.0.5","user-name":"admin","application":"Database Tool","last-login-time":{"iso-8601":"2020-05-07T14:19+0000","posix":1588861192767},"domain":{"uid":"41e821a0-3720-11e3-aa6e-0800200c9fde","domain-type":"domain","name":"SMC User"},"state":"published","read-only":false},"access-policy-installation-date":{"iso-8601":"2020-05-07T14:22+0000","posix":1588861320617},"access-policy-name":"Standard","access-policy-installed":true,"threat-policy-installed":false},"hardware":"CloudGuard IaaS"}];
+
+
+        // end of dynamic content
+    </script>
+
+    <script>
+        var objectsMap = {};
+
+        var objects = {};
+
+        var keysOrderArray = ["uid", "name", "type", "domain", "ipv4-address", "ipv6-address", "subnet4", "subnet-mask", "mask-length4", "subnet6", "mask-length6", "port"];
+
+        function filterObjects(arr) {
+            var queryParams = getQueryParams();
+            return arr.filter(function (obj) {
+                var keep = true;
+                if (("type" in obj) && ("type" in queryParams)) keep = (queryParams["type"] === obj["type"]);
+                if ((keep) && ("uid" in obj) && ("uid" in queryParams)) keep = (queryParams["uid"] === obj["uid"]);
+                return keep;
+            });
+        }
+
+        function sortAndFilterObjects() {
+            data.forEach(function (o) {
+                if (o.uid) {
+                    objectsMap[o.uid] = o;
+                }
+            });
+
+            var filteredObjects = filterObjects(data);
+            objects = filteredObjects.sort(function (a, b) {
+                if (a.type == null && b.type == null) {
+                    return 0
+                }
+                if (a.type == null) {
+                    return 1
+                }
+                if (b.type == null) {
+                    return -1
+                }
+                return (a.type).localeCompare(b.type);
+            });
+        }
+
+        function printHeadline(txt) {
+            var headline = document.createElement("H1");
+            headline.appendChild(document.createTextNode("Type: " + txt));
+            document.body.appendChild(headline);
+        }
+
+        function printArray(arr, parentObject, level) {
+            if (arr.length === 0) {
+                parentObject.appendChild(document.createTextNode(" [Empty array]"));
+            }
+            var tableElement = document.createElement("table");
+            arr.forEach(function (elem, index) {
+                var rowElement = document.createElement("tr");
+                var indexElement = document.createElement("td");
+                indexElement.className = "array_item";
+                indexElement.appendChild(document.createTextNode("#" + index.toString()));
+                rowElement.appendChild(indexElement);
+
+                var valueElement = document.createElement("td");
+                printChildElement(elem, valueElement, level);
+                rowElement.appendChild(valueElement);
+                tableElement.appendChild(rowElement);
+            });
+            parentObject.appendChild(tableElement);
+        }
+
+        function printObject(obj, parentObject, level) {
+
+            if (typeof(obj) !== "object") {
+                parentObject.appendChild(generateValueNode(obj.toString()));
+                return;
+            }
+
+            var tableElement = document.createElement("table");
+            if (level === 0) {
+                tableElement.className = "main_table";
+            }
+
+            Object.keys(obj).sort(function (a, b) {
+                var aa = keysOrderArray.indexOf(a);
+                var bb = keysOrderArray.indexOf(b);
+                return aa !== -1 && bb !== -1 && aa - bb || aa !== -1 && -1 || bb !== -1 && 1 || a.localeCompare(b);
+            }).forEach(function (key) {
+                var rowElement = document.createElement("tr");
+                var keyElement = document.createElement("td");
+                keyElement.className = "key";
+                keyElement.appendChild(document.createTextNode(key + ":"));
+                rowElement.appendChild(keyElement);
+
+                var valueElement = document.createElement("td");
+                printChildElement(obj[key], valueElement, level);
+                rowElement.appendChild(valueElement);
+
+                tableElement.appendChild(rowElement);
+            });
+
+            parentObject.appendChild(tableElement);
+        }
+
+        function printChildElement(elem, parent, level) {
+            switch (Object.prototype.toString.call((elem))) {
+                case "[object Object]":
+                    parent.className = "object_value";
+                    printObject(elem, parent, level + 1);
+                    break;
+                case "[object Array]":
+                    parent.className = "object_value";
+                    printArray(elem, parent, level + 1);
+                    break;
+                default:
+                    parent.appendChild(generateValueNode(elem));
+            }
+        }
+
+        function printObjectTitle(obj) {
+            var headline = document.createElement("h3");
+            var anchor = document.createElement("a");
+
+            var txt = "UID: " + obj["uid"];
+            if ("name" in obj) {
+                txt = "Name: " + obj["name"];
+            }
+            anchor.setAttribute("name", obj["uid"]);
+            headline.appendChild(document.createTextNode(txt));
+            document.body.appendChild(anchor);
+            document.body.appendChild(headline);
+
+        }
+
+        function printAllObjects() {
+            sortAndFilterObjects();
+            document.title = "Package Objects";
+            var previousType = "";
+            objects.forEach(function (obj) {
+                if (obj.type !== previousType) {
+                    printHeadline(obj.type);
+                }
+
+                printObjectTitle(obj);
+                printObject(obj, document.body, 0);
+                document.body.appendChild(document.createElement("BR"));
+
+                previousType = obj.type;
+            });
+        }
+
+        var isUUID = function () {
+            var uuidRegEx = RegExp("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", "i");
+            return function (str) {
+                return uuidRegEx.test(str);
+            }
+        }();
+
+        var getLinkBase = function () {
+            var linkBase = "./" + document.location.pathname.split("/").splice(-1, 1) + "?uid=";
+            return function () {
+                return linkBase;
+            }
+        }();
+
+        var getQueryParams = function () {
+            var qs = document.location.search.split('+').join(' ');
+
+            var params = {},
+                tokens,
+                re = /[?&]?([^=]+)=([^&]*)/g;
+
+            while (tokens = re.exec(qs)) {
+                params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+            }
+
+            return function () {
+                return params;
+            };
+        }();
+
+        function generateValueNode(value) {
+            var valueNode;
+            if (isUUID(value) && objectsMap[value] && getQueryParams()["uid"] !== value) {
+                valueNode = document.createElement("a");
+                valueNode.className = "object_link";
+                valueNode.setAttribute("href", getLinkBase() + value);
+                valueNode.setAttribute("target", "_blank");
+                valueNode.appendChild(document.createTextNode(value));
+            } else {
+                valueNode = document.createTextNode(value)
+            }
+            return valueNode;
+        }
+    </script>
+
+</head>
+
+<body onload="printAllObjects()">
+
+</body>
+</html>

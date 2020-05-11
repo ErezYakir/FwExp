@@ -1,0 +1,63 @@
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: The parameters that were received:  userRequestGateway:(-g)=test username:(-u)=admin password:(-p)=*****
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Limit number of object per page: 10
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Login As root: false
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Login with 'read-only' flag. 
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.writeTheVersionsToTheLogger()INFO]: Management API running version: 1.5
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.writeTheVersionsToTheLogger()INFO]: show_package v2.0.2
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.writeTheVersionsToTheLogger()INFO]: Chosen port: 443
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Chosen server IP: 127.0.0.1
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Login response: {"session-timeout":600,"api-server-version":"1.5","last-login-was-at":{"iso-8601":"2020-05-11T08:22+0000","posix":1589185357847},"read-only":true,"url":"https:\/\/127.0.0.1:443\/web_api","sid":"F4hvgJd7NHdKYhSLkwCaQEDn68jDscsQSnPYrepRXjU"}
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Run command: 'show-gateways-and-servers' with details level 'full'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 2 gateways from 'show-gateways-and-servers' 
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.setGatewayAndServerPolicy()INFO]: gateway test2 is not relevant.
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.collectGatewaysInUseAndInstalledPolicies()INFO]: Found 1 gateways that have a policy installed on them
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Run command: 'show-vpn-communities-star' with details level 'full'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Run command: 'show-vpn-communities-meshed' with details level 'full'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 3 vpn communities
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Run command: 'show-packages' with details level 'full'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 1 packages
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.showPackages()INFO]: Packages which were found on the management: [Standard]
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.showPackages()INFO]: Packages which were installed on gateways: []
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.showPackages()INFO]: Only one package exists, show this package: 'Standard'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Starting to process layers of package 'Standard'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Run command: 'show-package' Standard' with details level 'full'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 1 access layer(s) in package: 'Standard'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.buildLayers()INFO]: Access layer(s) that were found in package 'Standard' are: Network, 
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 2 threat layer(s) in package: 'Standard'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.buildLayers()INFO]: Threat layer(s) that were found in package 'Standard' are: IPS, Standard Threat Prevention, 
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found nat layer in package: 'Standard'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Handle access layers
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.showAccessRulebase()INFO]: Starting handling access layer: 'Network'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Run command: 'show-access-rulebase' with payload: {"uid":"c0264a80-1832-4fce-8a90-d0849dc4ba33","use-object-dictionary":true,"details-level":"full"}
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Command [show-access-rulebase] uid c0264a80-1832-4fce-8a90-d0849dc4ba33 : Starting execution of 1 tasks (with 2 executor(s))
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Command [show-access-rulebase] uid c0264a80-1832-4fce-8a90-d0849dc4ba33 limit 10 offset 0 SUCCESSFUL
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Command [show-access-rulebase] uid c0264a80-1832-4fce-8a90-d0849dc4ba33 : Finished execution of 1 tasks
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 7 rules in : 'Network'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 0 inline layer(s)
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Creating html file for layer: 'Network'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.showRulebase()INFO]: Done handling rulebase 'Network'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Handle nat layer
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.showNatRulebase()INFO]: Starting handling nat layer: 
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Run command: 'show-nat-rulebase' with payload: {"package":"Standard","use-object-dictionary":true,"details-level":"full"}
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Command [show-nat-rulebase] uid null : Starting execution of 1 tasks (with 2 executor(s))
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Command [show-nat-rulebase] uid null limit 10 offset 0 SUCCESSFUL
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Command [show-nat-rulebase] uid null : Finished execution of 1 tasks
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 4 rules in : 'NAT'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 0 inline layer(s)
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Creating html file for layer: 'NAT'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.showRulebase()INFO]: Done handling rulebase 'NAT'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Handle threat layers
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.showThreatRulebase()INFO]: Starting handling threat layer: 'IPS'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Run command: 'show-threat-rulebase' for rulebase: '0155e456-29e5-4f28-9e71-a160d30f6fcb' ('IPS') with details level 'full'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.showThreatRulebase()INFO]: Starting handling threat layer: 'Standard Threat Prevention'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Run command: 'show-threat-rulebase' for rulebase: 'a079fbc9-3d9b-400d-ab5f-d91427a61203' ('Standard Threat Prevention') with details level 'full'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Run command: 'show-threat-rule-exception-rulebase' for threat layer: 'Standard Threat Prevention' ('6d673118-0b38-4635-98aa-3547c3f56426') with details level 'full'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 1 exception(s) in rule: '6d673118-0b38-4635-98aa-3547c3f56426'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Found 1 rules in: 'Standard Threat Prevention'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.MyLogger.debug()DEBUG]: Creating html file for rulebase: 'Standard Threat Prevention'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.showThreatRulebase()INFO]: Done handling rulebase: 'Standard Threat Prevention'
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.buildPackagePolicy()INFO]: There are 6 nested object(s) to retrieve (with limit 10)
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.buildPackagePolicy()INFO]: 6 objects were retrieved. New size of nested objects queue is 0
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.logoutReportAndExit()INFO]: Script finished running successfully!
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.logoutReportAndExit()INFO]: dirPath: /home/admin/f2d345c6-d8be-4738-86d9-176c33db294b
+[5/11/20 8:29 AM com.checkpoint.mgmt_api.examples.ShowPackageTool.logoutReportAndExit()INFO]: tarGzPath: show_package-2020-05-11_08-29-06.tar.gz
