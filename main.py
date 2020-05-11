@@ -13,13 +13,13 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 try:
     f = checkpointfirewall.CheckpointFirewall("40.121.81.190", "admin", "Aa123456123456", "mongodb://localhost:27017/", "Checkpoint", port=2222)
-    f.fetch(fetch_remotely=False)
+    f.fetch(fetch_remotely=True)
     f.parseToDb()
 
-    f2 = fortigatefirewall.FortigateFirewall("52.161.93.194", "yakir", "Aa123456123456", "mongodb://localhost:27017/",
-                                              "Fortigate")
-    f2.fetch()
-    f.parseToDb()
+    #f2 = fortigatefirewall.FortigateFirewall("52.161.93.194", "yakir", "Aa123456123456", "mongodb://localhost:27017/",
+    #                                          "Fortigate")
+    #f2.fetch()
+    #f.parseToDb()
 
 
     m_analyzer = analyzer("mongodb://localhost:27017/", "Checkpoint")

@@ -1,44 +1,10 @@
-from enum import Enum
-import sqlite3
 import pymongo
-
-
-class Vendor(Enum):
-    CHECKPOINT = 1
-    FORTIGATE = 2
-    PALOALTO = 3
-
-
-class AddressType(Enum):
-    FQDN = 'FQDN'
-    IP_RANGE = 'IP_RANGE'
 
 
 class Firewall(object):
     """
-    Reprensents a Firewall list of rules. should at the end contain a DB that represents the whole DB
-    The DB tables, fields will be:
-    Table 1 - Policy
-    * Name - not necesarily relevant for parsing but for later looking at the DB for exact Rule
-    * Source - Taken 1 for 1 from Backup file
-    * Dest - Taken 1 for 1 from Backup file
-    * Schedule - seen it on fortigate, should look in other Firewalls XXX
-    * Service - taken 1 for 1 from Backup file
-    * Ports - taken 1 for 1 from Backup file, added from Service list
-    * Action - taken 1 for 1 from Backup file
-    * NAT - seen it on fortigate, should look in other Firewalls XXX
-    * Security Profile - seen it on fortigate, should look in other Firewalls XXX
-
-    Table 2 - Addresses
-    * Name
-    * Type - Subnet / ip range / FQDN
-    * Value
-
-    Table 3 - Services (Translation of service to its default port)
-    * Service Name
-    * Ports value
-
-
+    A base class for firewall parser.
+    This class should be able to take firewall configuration and convert it to a single format.
     """
 
     def __init__(self, ip, user, pwd, db_path, db_name="Firewall_info"):
@@ -47,20 +13,23 @@ class Firewall(object):
         self.pwd = pwd
         self.conn = pymongo.MongoClient(db_path)
         self.cursor = self.conn[db_name]
-        self.policy_col = self.cursor['policy']
-        self.address_objects_col = self.cursor['addresses']
-        self.service_objects_col = self.cursor['services']
-        self.misc_objects_col = self.cursor['misc']
+        self.policy_col = self.cursor['policy']  # contains the rules
+        self.network_objects_col = self.cursor['network_objects'] # contains objects that Source/Dest columns contains
+        self.service_objects_col = self.cursor['service_object']  # contains the objects that service column contains
+        self.misc_objects_col = self.cursor['misc']  # contains all the other objects
 
     def fetch(self):
+        """
+        Fetches the configuration of firewall for later parsing
+        """
         raise NotImplementedError()
 
     def parseToDb(self):
         """
-        Reads temp\bkp.tmp and updates mongodb accordingly
-        :return:
+        parses objects and rules in configuration into single format and fills in mongodb.
         """
-        self.address_objects_col.drop()
+        # Clear any early data
+        self.network_objects_col.drop()
         self.service_objects_col.drop()
         self.policy_col.drop()
         self.misc_objects_col.drop()
@@ -68,8 +37,8 @@ class Firewall(object):
         results = self._parse_misc()
         self.misc_objects_col.insert_many(results)
 
-        results = self._parse_addresses()
-        self.address_objects_col.insert_many(results)
+        results = self._parse_network_objects()
+        self.network_objects_col.insert_many(results)
 
         results = self._parse_services()
         self.service_objects_col.insert_many(results)
@@ -86,8 +55,5 @@ class Firewall(object):
     def _parse_policy(self):
         raise NotImplementedError()
 
-    def _parse_addresses(self):
-        raise NotImplementedError()
-
-    def _parse_groups(self):
+    def _parse_network_objects(self):
         raise NotImplementedError()

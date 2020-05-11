@@ -1,4 +1,4 @@
-
+"""
 class RuleObject(object):
     def __init__(self, id, name, vdom, priority, extra_info, service=[], vpn=[], source=[], destination=[]):
         self.id = id
@@ -15,3 +15,4 @@ class RuleObject(object):
         self.is_enabled = True
         self.Action = True
         self.extra_info = extra_info
+"""

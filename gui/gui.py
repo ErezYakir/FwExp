@@ -75,24 +75,42 @@ class JSONTreeFrame(ttk.Frame):
 
         self.query_btn = tk.Button(self.query_frame, text="Go!", command=self.search_query_action)
         self.query_btn.pack(side=tk.RIGHT)
-        self.tkvar = tk.StringVar(self.master)
-        # Dictionary with options
-        choices = {'Search By Name', 'Search By Id', 'Get Rules for Source', 'Get Rules for Destination'}
-        self.tkvar.set('Search By Name')  # set the default option
-        self.popupMenu = tk.OptionMenu(self.query_frame, self.tkvar, *choices)
+
+        self.analysis_func = tk.StringVar(self.master)
+        choices = {'Search By Name', 'Search By Id', 'Get Rules for Source', 'Get Rules for Destination',
+                   'Get Allowed Rules', 'Get Denied Rules'}
+        self.analysis_func.set('Search By Name')  # set the default option
+        self.popupMenu = tk.OptionMenu(self.query_frame, self.analysis_func, *choices)
         self.popupMenu.pack(side=tk.RIGHT)
+
+        self.document = tk.StringVar(self.master)
+        choices = {'Last Result', 'Full Collection'}
+        self.document.set('Full Collection')  # set the default option
+        self.popupMenu = tk.OptionMenu(self.query_frame, self.document, *choices)
+        self.popupMenu.pack(side=tk.RIGHT)
+
+        label = tk.Label(self.query_frame, text="Search In:")
+        label.pack(side=tk.RIGHT)
+
         self.query_box = tk.Entry(self.query_frame)
         self.query_box.pack(fill='x')
 
     def search_query_action(self):
-        choice = self.tkvar.get()
+        search_in = self.document.get() == 'Last Result'
+        choice = self.analysis_func.get()
         query = self.query_box.get()
         if choice == 'Search By Name':
-            result = self.m_analyzer._get_obj_by_name(query)
+            result = self.m_analyzer._get_obj_by_name(query, search_in)
         elif choice == 'Search By Id':
-            result = self.m_analyzer._get_obj_by_id(query)
+            result = self.m_analyzer._get_obj_by_id(query, search_in)
         elif choice == 'Get Rules for Source':
-            result = self.m_analyzer._find_rules_containing_address_in_source(query)
+            result = self.m_analyzer._find_rules_containing_address_in_column(query, 'source', search_in)
+        elif choice == 'Get Rules for Destination':
+            result = self.m_analyzer._find_rules_containing_address_in_column(query, 'destination', search_in)
+        elif choice == 'Get Allowed Rules':
+            result = self.m_analyzer._find_allowed_denied_rules(True, search_in)
+        elif choice == 'Get Denied Rules':
+            result = self.m_analyzer._find_allowed_denied_rules(False, search_in)
         self.set_table_data_from_json(result)
 
     def insert_node(self, parent, key, value):

@@ -9,35 +9,38 @@ import os
 from main import PROJECT_DIR
 
 class CheckpointFirewall(Firewall):
-    def __init__(self, ip, user, pwd, db_path, db_name="Firewall_info", port=22):
+    def __init__(self, ip, user, pwd, db_path, db_name="Firewall_info", port=22, gateway_name='test'):
         super().__init__(ip, user, pwd, db_path, db_name)
-        self.known_obj_types = ['vpn-community-meshed', 'vpn-community-star', 'dns-domain', 'RulebaseAction', 'service-tcp',
-                              'CpmiLogicalServer', 'Global', 'security-zone', 'Track', 'threat-profile',
-                              'ThreatExceptionRulebase', 'host', 'CpmiAnyObject', 'group', 'wildcard', 'network',
-                                'address-range', 'service-udp', 'service-dce-rpc', 'service-icmp', 'service-rpc',
-                                'CpmiSrCommunity', 'service-group', 'CpmiVoipGwDomain', 'CpmiVoipSkinnyDomain',
-                                'CpmiVoipSipDomain', 'dynamic-object', 'group-with-exclusion', 'multicast-address-range']
+        self.known_obj_types = ['vpn-community-meshed', 'vpn-community-star', 'dns-domain', 'RulebaseAction',
+                                'service-tcp', 'CpmiLogicalServer', 'Global', 'security-zone', 'Track',
+                                'threat-profile', 'ThreatExceptionRulebase', 'host', 'CpmiAnyObject', 'group',
+                                'wildcard', 'network', 'address-range', 'service-udp', 'service-dce-rpc',
+                                'service-icmp', 'service-rpc', 'CpmiSrCommunity', 'service-group', 'CpmiVoipGwDomain',
+                                'CpmiVoipSkinnyDomain', 'CpmiVoipSipDomain', 'dynamic-object', 'group-with-exclusion',
+                                'multicast-address-range', 'access-layer']
         self.port = port
+        self.gateway = gateway_name
+        self.config_path = PROJECT_DIR + "/checkpoint_config_files/"
+        self.checkpoint_rules = {}
+        self.checkpoint_objects = {}
 
     def fetch(self, fetch_remotely=True):
         if fetch_remotely:
-            #shutil.rmtree('checkpoint_config_files')
-            #os.mkdir('checkpoint_config_files')
             remote = RemoteClient(self.ip, self.user, self.pwd, self.port)
             response = remote.execute_command(
-                '$MDS_FWDIR/scripts/web_api_show_package.sh -g {} -u {} -p {}'.format('test', self.user, self.pwd)
+                '$MDS_FWDIR/scripts/web_api_show_package.sh -g {} -u {} -p {}'.format(self.gateway, self.user, self.pwd)
             )
             if 'successfully' not in response[0]:
                 raise Exception('Could not export checkpoint configuration.')
             result_path = re.search('Result file location:\s(.+)', response[1]).group(1)
-            remote.download_file(result_path, '{}/checkpoint_config_files'.format(PROJECT_DIR))
+            remote.download_file(result_path, self.config_path)
             import tarfile
-            tf = tarfile.open("{}/checkpoint_config_files/{}".format(PROJECT_DIR, result_path))
-            tf.extractall('{}/checkpoint_config_files'.format(PROJECT_DIR))
+            tf = tarfile.open(self.config_path + result_path)
+            tf.extractall(self.config_path)
 
-        with open('{}/checkpoint_config_files/Standard_objects.json'.format(PROJECT_DIR), 'r') as f:
+        with open(self.config_path + 'Standard_objects.json', 'r') as f:
             self.checkpoint_objects = json.loads(f.read())
-        with open('{}/checkpoint_config_files/Network-Management server.json'.format(PROJECT_DIR), 'r') as f:
+        with open(self.config_path + 'Network-Management server.json', 'r') as f:
             self.checkpoint_rules = json.loads(f.read())
 
     def _parse_policy(self):
@@ -51,7 +54,8 @@ class CheckpointFirewall(Firewall):
                     policy_item['priority'] = rule[key]
                 elif key == 'action':
                     policy_item['action'] = (self._get_obj_by_uid(rule['action'])['name'] == 'Accept')
-                elif key in ['source-negate', 'destination-negate', 'service-negate', 'destination', 'source', 'enabled', 'service', 'name']:
+                elif key in ['source-negate', 'destination-negate', 'service-negate', 'destination',
+                             'source', 'enabled', 'service', 'name']:
                     policy_item[key] = rule[key]
                 else:
                     policy_item['extra_info'][key] = rule[key]
@@ -62,16 +66,18 @@ class CheckpointFirewall(Firewall):
     def _parse_services(self):
         parsed_objs = []
         for obj in self.checkpoint_objects:
-            if obj['type'] in ['service-udp0', 'service-dce-rpc', 'service-rpc', 'service-tcp', 'service-icmp', 'service-group']:
+            if obj['type'] in ['service-udp', 'service-dce-rpc', 'service-rpc', 'service-tcp',
+                               'service-icmp', 'service-group']:
                 new_svc = self._parse_single_service(obj)
                 parsed_objs.append(new_svc)
             elif obj['type'] in self.known_obj_types:
                 continue
             else:
+                print('unrecognized checkpoint object:', obj['type'])
                 raise NotImplementedError()
         return parsed_objs
 
-    def _parse_addresses(self):
+    def _parse_network_objects(self):
         parsed_objs = []
         for obj in self.checkpoint_objects:
             if obj['type'] == 'host':
@@ -84,7 +90,7 @@ class CheckpointFirewall(Firewall):
             elif obj['type'] in self.known_obj_types:
                 continue
             else:
-                print ('unrecognized checkpoint object:', obj['type'])
+                print('unrecognized checkpoint object:', obj['type'])
                 raise NotImplementedError()
         return parsed_objs
 

@@ -17,7 +17,7 @@ class FortigateFirewall(Firewall):
         # Download file locally
         self.backup_config = ses.get(fetch_url, verify=False).text
 
-    def _parse_addresses(self):
+    def _parse_network_objects(self):
         p_entering_address_block = re.compile('^\s*config firewall address$', re.IGNORECASE)
         p_exiting_address_block = re.compile('^end$', re.IGNORECASE)
         p_address_next = re.compile('^next$', re.IGNORECASE)
