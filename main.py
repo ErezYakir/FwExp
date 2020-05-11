@@ -1,8 +1,15 @@
 from firewall import fortigatefirewall, checkpointfirewall
 from analyzer.analyzer import analyzer
 from firewall.networkobject import NetworkObject
-import PySimpleGUI as sg
+import tkinter as tk
+import tkinter.ttk as ttk
+import os
+from tkinter import filedialog, Tk
+from tkinter import font
 import pprint
+from gui.gui import JSONTreeFrame
+
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 try:
     f = checkpointfirewall.CheckpointFirewall("40.121.81.190", "admin", "Aa123456123456", "mongodb://localhost:27017/", "Checkpoint", port=2222)
@@ -16,34 +23,32 @@ try:
 
 
     m_analyzer = analyzer("mongodb://localhost:27017/", "Checkpoint")
-    sg.theme('DarkAmber')  # Add a touch of color
-    layout = [[sg.Text('Output window:')],
-              [sg.Output(size=(150, 50), key='-OUTPUT-')],
-              [sg.In(key='-IN-'), sg.Drop(key='option', values=('Search By Name', 'Search By Id',
-                                                                'Get Rules By Source', 'Get Rules By Destination'))],
-              [sg.Button('Go'), sg.Button('Clear'), sg.Button('Exit')]]
+    root: Tk = tk.Tk()
+    root.title('PyJSONViewer')
+    root.geometry("500x500")
+    menubar = tk.Menu(root)
 
-    window = sg.Window('Firewall Analyzer', layout)
-    # Event Loop to process "events" and get the "values" of the inputs
-    while True:
-        event, values = window.read()
-        search = values['-IN-']
-        option = values['option']
-        if option == 'Search By Name':
-            obj = m_analyzer._get_obj_by_name(search)
-        if option == 'Get Rules By Source':
-            obj = m_analyzer._find_rules_containing_address_in_source(search)
-        if option == 'Search By Id':
-            obj = m_analyzer._get_obj_by_id(search)
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(obj)
-        #print(obj)
-        if event in (None, 'Exit'):
-            break
-        if event == 'Clear':
-            window['-OUTPUT-'].update('')
+    app = JSONTreeFrame(root, m_analyzer)
 
-    window.close()
+    tool_menu = tk.Menu(menubar, tearoff=0)
+    tool_menu.add_command(label="Expand all",
+                          accelerator='Ctrl+E', command=app.expand_all)
+    tool_menu.add_command(label="Collapse all",
+                          accelerator='Ctrl+L', command=app.collapse_all)
+    menubar.add_cascade(label="Tools", menu=tool_menu)
+
+    help_menu = tk.Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Help", menu=help_menu)
+
+    app.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+    root.columnconfigure(0, weight=1)
+    root.rowconfigure(0, weight=1)
+
+    app.init_search_box()
+    app.init_query_box()
+
+    root.config(menu=menubar)
+    root.mainloop()
 
 except  Exception as e:
     print(e)

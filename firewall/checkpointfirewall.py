@@ -6,12 +6,12 @@ import json
 from .ssh_client import RemoteClient
 import shutil
 import os
-
+from main import PROJECT_DIR
 
 class CheckpointFirewall(Firewall):
     def __init__(self, ip, user, pwd, db_path, db_name="Firewall_info", port=22):
         super().__init__(ip, user, pwd, db_path, db_name)
-        self.known_obj_types = ['vpn-community-meshed', 'dns-domain', 'RulebaseAction', 'service-tcp',
+        self.known_obj_types = ['vpn-community-meshed', 'vpn-community-star', 'dns-domain', 'RulebaseAction', 'service-tcp',
                               'CpmiLogicalServer', 'Global', 'security-zone', 'Track', 'threat-profile',
                               'ThreatExceptionRulebase', 'host', 'CpmiAnyObject', 'group', 'wildcard', 'network',
                                 'address-range', 'service-udp', 'service-dce-rpc', 'service-icmp', 'service-rpc',
@@ -30,14 +30,14 @@ class CheckpointFirewall(Firewall):
             if 'successfully' not in response[0]:
                 raise Exception('Could not export checkpoint configuration.')
             result_path = re.search('Result file location:\s(.+)', response[1]).group(1)
-            remote.download_file(result_path, 'checkpoint_config_files')
+            remote.download_file(result_path, '{}/checkpoint_config_files'.format(PROJECT_DIR))
             import tarfile
-            tf = tarfile.open("checkpoint_config_files/{}".format(result_path))
-            tf.extractall('checkpoint_config_files')
+            tf = tarfile.open("{}/checkpoint_config_files/{}".format(PROJECT_DIR, result_path))
+            tf.extractall('{}/checkpoint_config_files'.format(PROJECT_DIR))
 
-        with open('checkpoint_config_files/Standard_objects.json', 'r') as f:
+        with open('{}/checkpoint_config_files/Standard_objects.json'.format(PROJECT_DIR), 'r') as f:
             self.checkpoint_objects = json.loads(f.read())
-        with open('checkpoint_config_files/Network-Management server.json', 'r') as f:
+        with open('{}/checkpoint_config_files/Network-Management server.json'.format(PROJECT_DIR), 'r') as f:
             self.checkpoint_rules = json.loads(f.read())
 
     def _parse_policy(self):
@@ -84,7 +84,7 @@ class CheckpointFirewall(Firewall):
             elif obj['type'] in self.known_obj_types:
                 continue
             else:
-                print (obj['type'])
+                print ('unrecognized checkpoint object:', obj['type'])
                 raise NotImplementedError()
         return parsed_objs
 
