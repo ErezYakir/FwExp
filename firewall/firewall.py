@@ -50,6 +50,7 @@ class Firewall(object):
         self.policy_col = self.cursor['policy']
         self.address_objects_col = self.cursor['addresses']
         self.service_objects_col = self.cursor['services']
+        self.misc_objects_col = self.cursor['misc']
 
     def fetch(self):
         raise NotImplementedError()
@@ -62,6 +63,10 @@ class Firewall(object):
         self.address_objects_col.drop()
         self.service_objects_col.drop()
         self.policy_col.drop()
+        self.misc_objects_col.drop()
+
+        results = self._parse_misc()
+        self.misc_objects_col.insert_many(results)
 
         results = self._parse_addresses()
         self.address_objects_col.insert_many(results)
@@ -72,52 +77,17 @@ class Firewall(object):
         results = self._parse_policy()
         self.policy_col.insert_many(results)
 
-    def _parse_addresses(self):
+    def _parse_misc(self):
         raise NotImplementedError()
+
     def _parse_services(self):
         raise NotImplementedError()
 
     def _parse_policy(self):
-        """
-        returns an array of objects out of the firewall configuration which looks like:
-        [{
-        'name':'example', 'id':'123', 'srcintf':['interface1'],
-        'dstintf':['interface2', 'interface3'], 'srcaddr':[{'type':'ADDRESS', 'name':'ALL_IPS'}],
-        'dstaddr':[{'type':'ADDRESS', 'name':'MY_IP'}, {'type':'GROUP', 'name':'GRP1'}],
-         'service':['SMB','TCP\123','UDP\53'],
-        'priority': 15, 'action': 1(ALLOW), 'enabled':0(not enabled)
-        }]
-        pay attention to the types of each value and to the name of each key. it's important to return
-        it fully with every parameter, if needed, calculate yourself a value if not given in configuration.
-        It is possible to enlarge the returned object to allow for more features, but those are the required params.
-        """
         raise NotImplementedError()
 
     def _parse_addresses(self):
-        """
-        returns an array of objects out of the firewall configuration which looks like:
-        [{
-        'name':'my_address', 'id':'123', 'value': {'type':'FQDN', 'fqdn':'www.google.com'}
-        },
-        {
-        'name':'my_second_address', 'id':'145', 'value': {'type':'IP_RANGE', 'MIN_IP':'192.168.0.1', 'MAX_IP':'192.168.0.128'}
-        }
-        ]
-        pay attention to the types of each value and to the name of each key. it's important to return
-        it fully with every parameter, if needed, calculate yourself a value if not given in configuration.
-        It is possible to enlarge the returned object to allow for more features, but those are the required params.
-        """
         raise NotImplementedError()
 
     def _parse_groups(self):
-        """
-        returns an array of objects out of the firewall configuration which looks like:
-        [{
-        'name':'my_group', 'id':'123', 'value': [{'type':'address', 'name':'my_address'}, {'type':'group', name:'grp1'}]
-        }
-        ]
-        pay attention to the types of each value and to the name of each key. it's important to return
-        it fully with every parameter, if needed, calculate yourself a value if not given in configuration.
-        It is possible to enlarge the returned object to allow for more features, but those are the required params.
-        """
         raise NotImplementedError()

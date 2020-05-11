@@ -33,7 +33,7 @@ class CheckpointFirewall(Firewall):
                     policy_item['priority'] = rule[key]
                 elif key == 'action':
                     policy_item['action'] = (self._get_obj_by_uid(rule['action'])['name'] == 'Accept')
-                elif key in ['source-negate', 'destination-negate', 'service-negate', 'destination', 'source', 'enabled', 'vpn', 'service', 'name']:
+                elif key in ['source-negate', 'destination-negate', 'service-negate', 'destination', 'source', 'enabled', 'service', 'name']:
                     policy_item[key] = rule[key]
                 else:
                     policy_item['extra_info'][key] = rule[key]
@@ -117,8 +117,8 @@ class CheckpointFirewall(Firewall):
         obj_type = obj['type']
         if obj_type == 'CpmiAnyObject':
             single_item['type'] = 'IP_RANGE'
-            single_item['min_ip'] = int(ipaddress.IPv4Network('0.0.0.0/0')[0])
-            single_item['max_ip'] = int(ipaddress.IPv4Network('0.0.0.0/0')[-1])
+            single_item['min_ip'] = int(ipaddress.IPv4Network('0.0.0.0/0', False)[0])
+            single_item['max_ip'] = int(ipaddress.IPv4Network('0.0.0.0/0', False)[-1])
         elif obj_type == 'group':
             single_item['type'] = 'GROUP'
         elif obj_type == 'wildcard':
@@ -126,7 +126,7 @@ class CheckpointFirewall(Firewall):
             single_item['wildcard_ip'] = obj['ipv4-address']
             single_item['wildcard_mask'] = obj['ipv4-mask-wildcard']
         elif obj_type == 'network' or obj_type == 'CpmiInterface':
-            net = ipaddress.IPv4Network('{}/{}'.format(obj['subnet4'], obj['mask-length4']))
+            net = ipaddress.IPv4Network('{}/{}'.format(obj['subnet4'], obj['mask-length4']), False)
             single_item['type'] = 'IP_RANGE'
             single_item['min_ip'] = int(net[0])
             single_item['max_ip'] = int(net[-1])
@@ -168,4 +168,12 @@ class CheckpointFirewall(Firewall):
         parsed_objs.append(group_obj)
         return parsed_objs
 
-
+    def _parse_misc(self):
+        objs = []
+        for obj in self.checkpoint_objects:
+            if obj['type'] in ['vpn-community-meshed', 'dns-domain', 'RulebaseAction',
+                              'CpmiLogicalServer', 'security-zone', 'Track', 'threat-profile',
+                              'ThreatExceptionRulebase', 'CpmiSrCommunity', 'CpmiVoipGwDomain', 'CpmiVoipSkinnyDomain',
+                                'CpmiVoipSipDomain', 'dynamic-object', 'group-with-exclusion', 'multicast-address-range']:
+                objs.append(obj)
+        return objs

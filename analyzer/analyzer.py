@@ -4,9 +4,9 @@ import logging
 
 
 class analyzer(object):
-    def __init__(self, db_path):
+    def __init__(self, db_path, db_name="Firewall_info"):
         self.conn = pymongo.MongoClient(db_path)
-        self.cursor = self.conn["Firewall_info"]
+        self.cursor = self.conn[db_name]
         self.policy_col = self.cursor['policy']
         self.address_objects_col = self.cursor['addresses']
         self.service_objects_col = self.cursor['services']
@@ -24,7 +24,7 @@ class analyzer(object):
     def _get_address_names_of_fqdn(self, fqdn):
         pass
 
-    def _get_address_objects_of_ip(self, ip):
+    def _get_newtork_objects_ids_of_ip(self, ip):
         ip_val = utils.ipv4_to_int(ip)
         results = []
         # Go over each object
@@ -51,12 +51,30 @@ class analyzer(object):
         return utils.remove_duplicates(result)
 
     def _get_obj_by_name(self, name):
-        return self.address_objects_col.find_one({'name': name})
+        obj = self.address_objects_col.find_one({'name': name})
+        if not obj:
+            return None
+        obj.pop('_id')
+        return obj
 
     def _get_obj_by_id(self, id):
-        return self.address_objects_col.find_one({'id': id})
+        obj = self.address_objects_col.find_one({'id': id})
+        if not obj:
+            return None
+        obj.pop('_id')
+        return obj
 
-    def _find_rules_containing_address(self, address_id):
-        for rule in self.policy_col.find().sort('priority', pymongo.DESCENDING):
-            pass
+
+    def _find_rules_containing_address_in_source(self, ip_address):
+        results = []
+        network_obj = self._get_newtork_objects_ids_of_ip(ip_address)
+        for obj_id in network_obj:
+            rules = self.policy_col.find({'source': obj_id, 'id': {'$nin': [rule['id'] for rule in results]}})
+            if rules:
+                results.extend(list(rules))
+        return results
+
+    def _network_object_matches_address(self, obj, ip_address):
+        if obj['type'] == 'IP_RANGE':
+            return
 

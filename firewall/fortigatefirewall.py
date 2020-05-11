@@ -70,7 +70,7 @@ class FortigateFirewall(Firewall):
                     else:
                         # means its subnet type
                         network, mask = address_elem.get('subnet', '0.0.0.0 0.0.0.0').split(' ')
-                        address_range = ipaddress.IPv4Network('{}/{}'.format(network, mask))
+                        address_range = ipaddress.IPv4Network('{}/{}'.format(network, mask), False)
                         address_elem = {'name': address_elem['name'], 'id': address_elem['uuid'],
                                         'type': 'IP_RANGE', 'min_ip': int(address_range[0]),
                                                   'max_ip': int(address_range[-1])}
@@ -274,7 +274,51 @@ class FortigateFirewall(Firewall):
 
         return service_list
 
-    #def _parse
+    def _parse_misc(self):
+        p_entering_interface_block = re.compile('^\s*config system interface$', re.IGNORECASE)
+        p_entering_schedule_block = re.compile('^\s*config firewall schedule recurring$', re.IGNORECASE)
+        p_exiting_block = re.compile('^end$', re.IGNORECASE)
+        p_next = re.compile('^next$', re.IGNORECASE)
+        p_name = re.compile('^\s*edit\s+"(?P<name>.*)"$', re.IGNORECASE)
+        p_set = re.compile('^\s*set\s+(?P<key>\S+)\s+(?P<value>.*)$', re.IGNORECASE)
+        in_block = False
+
+        misc_list = []
+        misc_elem = {}
+        obj_type = ''
+
+        for line in self.backup_config.splitlines():
+            line = line.lstrip().rstrip().strip()
+
+            if p_entering_interface_block.search(line):
+                in_block = True
+                obj_type = 'interface'
+            elif p_entering_schedule_block.search(line):
+                in_block = True
+                obj_type = 'schedule'
+
+            if in_block:
+                if p_name.search(line):
+                    address_name = p_name.search(line).group('name')
+                    misc_elem['name'] = address_name
+                    misc_elem['obj_type'] = obj_type
+
+                if p_set.search(line):
+                    key = p_set.search(line).group('key')
+                    value = p_set.search(line).group('value').strip()
+
+                    misc_elem[key] = value.strip("\"")
+
+                # We are done with the current address id
+                if p_next.search(line):
+                    misc_list.append(misc_elem)
+                    misc_elem = {}
+
+            # We are exiting the address block
+            if p_exiting_block.search(line):
+                in_block = False
+
+        return misc_list
 
     def _get_service_groups(self):
         pass
