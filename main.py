@@ -1,6 +1,5 @@
 from firewall import fortigatefirewall, checkpointfirewall
 from analyzer.analyzer import analyzer
-from firewall.networkobject import NetworkObject
 import tkinter as tk
 import tkinter.ttk as ttk
 import os
@@ -9,23 +8,22 @@ from tkinter import font
 import pprint
 from gui.gui import JSONTreeFrame
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 try:
-    f = checkpointfirewall.CheckpointFirewall("40.121.81.190", "admin", "Aa123456123456", "mongodb://localhost:27017/", "Checkpoint", port=2222)
-    f.fetch(fetch_remotely=True)
+    f = checkpointfirewall.CheckpointFirewall("13.90.245.118", "admin", "Aa123456123456", "mongodb://localhost:27017/", "Checkpoint", port=2222)
+    f.fetch(fetch_remotely=False)
     f.parseToDb()
 
-    #f2 = fortigatefirewall.FortigateFirewall("52.161.93.194", "yakir", "Aa123456123456", "mongodb://localhost:27017/",
+    #f2 = fortigatefirewall.FortigateFirewall("52.161.105.178", "yakir", "Aa123456123456", "mongodb://localhost:27017/",
     #                                          "Fortigate")
     #f2.fetch()
-    #f.parseToDb()
+    #f2.parseToDb()
 
 
     m_analyzer = analyzer("mongodb://localhost:27017/", "Checkpoint")
     root: Tk = tk.Tk()
     root.title('PyJSONViewer')
-    root.geometry("500x500")
+    root.geometry("800x800")
     menubar = tk.Menu(root)
 
     app = JSONTreeFrame(root, m_analyzer)
