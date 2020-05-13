@@ -10,7 +10,7 @@ from gui.gui import JSONTreeFrame
 
 
 try:
-    f = checkpointfirewall.CheckpointFirewall("13.90.245.118", "admin", "Aa123456123456", "mongodb://localhost:27017/", "Checkpoint", port=2222)
+    f = checkpointfirewall.CheckpointFirewall("13.90.196.33", "admin", "Aa123456123456", "mongodb://localhost:27017/", "Checkpoint", port=2222)
     f.fetch(fetch_remotely=False)
     f.parseToDb()
 

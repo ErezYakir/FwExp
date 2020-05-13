@@ -25,16 +25,9 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="More funcitonality in gui. ability to do nested queries">
-      <change afterPath="$PROJECT_DIR$/globals.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pql/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pql/aggregation.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pql/matching.py" afterDir="false" />
+    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="Changed the entire logic of querying the db">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/analyzer/analyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/firewall/checkpointfirewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/checkpointfirewall.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/firewall/fortigatefirewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/fortigatefirewall.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gui/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/gui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -255,7 +248,14 @@
       <option name="project" value="LOCAL" />
       <updated>1589209924910</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Changed the entire logic of querying the db">
+      <created>1589318133351</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1589318133351</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -302,57 +302,62 @@
     <MESSAGE value="Fetching from checkpoint ssh automation" />
     <MESSAGE value="Gui is nicer and more functional" />
     <MESSAGE value="More funcitonality in gui. ability to do nested queries" />
-    <option name="LAST_COMMIT_MESSAGE" value="More funcitonality in gui. ability to do nested queries" />
+    <MESSAGE value="Changed the entire logic of querying the db" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed the entire logic of querying the db" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="586" y="258" key="#Inspections" timestamp="1589360295562">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="586" y="258" key="#Inspections/0.0.1920.1160@0.0.1920.1160" timestamp="1589360295562" />
     <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1588579559109">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1160@0.0.1920.1160" timestamp="1588579559109" />
-    <state x="1169" y="196" key="#xdebugger.evaluate" timestamp="1589285410048">
+    <state x="1169" y="196" key="#xdebugger.evaluate" timestamp="1589357183610">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="1169" y="196" key="#xdebugger.evaluate/0.0.1920.1160@0.0.1920.1160" timestamp="1589285410048" />
-    <state width="1899" height="287" key="GridCell.Tab.0.bottom" timestamp="1589307731186">
+    <state x="1169" y="196" key="#xdebugger.evaluate/0.0.1920.1160@0.0.1920.1160" timestamp="1589357183610" />
+    <state width="1899" height="504" key="GridCell.Tab.0.bottom" timestamp="1589362674289">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="287" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1589307731186" />
-    <state width="1899" height="287" key="GridCell.Tab.0.center" timestamp="1589307731186">
+    <state width="1899" height="504" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1589362674289" />
+    <state width="1899" height="504" key="GridCell.Tab.0.center" timestamp="1589362674289">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="287" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1589307731186" />
-    <state width="1899" height="287" key="GridCell.Tab.0.left" timestamp="1589307731186">
+    <state width="1899" height="504" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1589362674289" />
+    <state width="1899" height="504" key="GridCell.Tab.0.left" timestamp="1589362674289">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="287" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1589307731186" />
-    <state width="1899" height="287" key="GridCell.Tab.0.right" timestamp="1589307731186">
+    <state width="1899" height="504" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1589362674289" />
+    <state width="1899" height="504" key="GridCell.Tab.0.right" timestamp="1589362674289">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="287" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1589307731186" />
-    <state width="1899" height="488" key="GridCell.Tab.1.bottom" timestamp="1589300224663">
+    <state width="1899" height="504" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1589362674289" />
+    <state width="1899" height="504" key="GridCell.Tab.1.bottom" timestamp="1589362676974">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="488" key="GridCell.Tab.1.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1589300224663" />
-    <state width="1899" height="488" key="GridCell.Tab.1.center" timestamp="1589300224663">
+    <state width="1899" height="504" key="GridCell.Tab.1.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1589362676974" />
+    <state width="1899" height="504" key="GridCell.Tab.1.center" timestamp="1589362676974">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="488" key="GridCell.Tab.1.center/0.0.1920.1160@0.0.1920.1160" timestamp="1589300224663" />
-    <state width="1899" height="488" key="GridCell.Tab.1.left" timestamp="1589300224663">
+    <state width="1899" height="504" key="GridCell.Tab.1.center/0.0.1920.1160@0.0.1920.1160" timestamp="1589362676974" />
+    <state width="1899" height="504" key="GridCell.Tab.1.left" timestamp="1589362676974">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="488" key="GridCell.Tab.1.left/0.0.1920.1160@0.0.1920.1160" timestamp="1589300224663" />
-    <state width="1899" height="488" key="GridCell.Tab.1.right" timestamp="1589300224663">
+    <state width="1899" height="504" key="GridCell.Tab.1.left/0.0.1920.1160@0.0.1920.1160" timestamp="1589362676974" />
+    <state width="1899" height="504" key="GridCell.Tab.1.right" timestamp="1589362676974">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1899" height="488" key="GridCell.Tab.1.right/0.0.1920.1160@0.0.1920.1160" timestamp="1589300224663" />
+    <state width="1899" height="504" key="GridCell.Tab.1.right/0.0.1920.1160@0.0.1920.1160" timestamp="1589362676974" />
     <state x="681" y="321" width="540" height="524" key="StructurePopup" timestamp="1588582033039">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="681" y="321" width="540" height="524" key="StructurePopup/0.0.1920.1160@0.0.1920.1160" timestamp="1588582033039" />
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1589209953127">
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1589318142135">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1589209953127" />
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1589318142135" />
     <state width="968" height="588" key="XDebugger.FullValuePopup" timestamp="1589295246570">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -401,23 +406,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/analyzer/analyzer.py</url>
-          <line>128</line>
+          <line>129</line>
           <option name="timeStamp" value="150" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/analyzer/analyzer.py</url>
-          <line>157</line>
-          <option name="timeStamp" value="151" />
+          <line>154</line>
+          <option name="timeStamp" value="166" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/analyzer/analyzer.py</url>
-          <line>153</line>
-          <option name="timeStamp" value="152" />
+          <line>82</line>
+          <option name="timeStamp" value="167" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/analyzer/analyzer.py</url>
-          <line>165</line>
-          <option name="timeStamp" value="153" />
+          <line>72</line>
+          <option name="timeStamp" value="168" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
