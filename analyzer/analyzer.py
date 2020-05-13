@@ -136,77 +136,113 @@ class analyzer(object):
         # self.last_result_col.insert(results)
         return results
 
-    def _find_allowed_denied_rules(self, is_allowed=True, search_in_last_result=False):
-        if search_in_last_result:
-            collection = self.last_result_col
-        else:
-            collection = self.policy_col
-        results = collection.find({'action': is_allowed}).distinct('id')
-        # self.last_result_col.drop()
-        # self.last_result_col.insert(results)
+    def _find_allowed_denied_rules(self, is_allowed=True):
+        results = self.policy_col.find({'action': is_allowed}).distinct('id')
         return results
-
-    def _network_object_matches_address(self, obj, ip_address):
-        if obj['type'] == 'IP_RANGE':
-            return
 
     def query(self, query_str):
         query_json = pql.find(query_str)  # Here we can also verify that the input types are correct #TODO
-        query_json_parsed = self._translate_query_ip_to_object_ids(query_json)
+        query_json_parsed = self._parse_user_query_to_db_query(query_json)
         var1 = self.policy_col.find(query_json_parsed).distinct('id')
         return self._get_rules_by_id(var1)
 
-    def _get_network_objects_for_subnet(self, subnet_addr):
+    def _translate_searched_ip_to_query(self, subnet_addr, field):
         # Algorithm: (All objects where min_ip <= subnet) intersection (All objects where max_ip >= subnet)
         if '/' in subnet_addr:
             ipnet = ipaddress.IPv4Network(subnet_addr, False)
-            less_then_start_of_subnet = self._get_network_objects_ids_of_ip(ipnet[0], '$lte')
-            more_then_end_of_subnet = self._get_network_objects_ids_of_ip(ipnet[-1], '$gte')
-            objects_containing_addr = list(set(less_then_start_of_subnet).intersection(more_then_end_of_subnet))
+            first_ip = int(ipnet[0])
+            last_ip = int(ipnet[-1])
         else:
-            objects_containing_addr = list(self._get_network_objects_ids_of_ip(subnet_addr, '$eq'))
-        return objects_containing_addr
+            ipaddr = int(ipaddress.IPv4Address(subnet_addr))
+            first_ip = int(ipaddr)
+            last_ip = int(ipaddr)
 
-    def _get_network_objects_for_not_subnet(self, subnet_addr):
-        # Algorithm: (All objects where min_ip >= subnet) join (All objects where max_ip <= subnet)
-        if '/' in subnet_addr:
-            ipnet = ipaddress.IPv4Network(subnet_addr, False)
-            objects_containing_addr = self._get_network_objects_ids_of_ip(ipnet[0], '$gte')
-            objects_containing_addr.update(self._get_network_objects_ids_of_ip(ipnet[-1], '$lte'))
-        else:
-            ipaddr = ipaddress.IPv4Address(subnet_addr)
-            objects_containing_addr = self._get_network_objects_ids_of_ip(ipaddr, '$gt')
-            objects_containing_addr.update(self._get_network_objects_ids_of_ip(ipaddr, '$lt'))
+        query = {'$or': [
+            {'$and': [
+                {field + '.min_ip': {'$lte': last_ip}},
+                {field + '.max_ip': {'$gte': first_ip}},
+                {self._get_negate_key_name_for_field(field): False}
+            ]},
+            {'$and': [
+                {'$nor': [
+                    {'$and': [
+                        {field + '.min_ip': {'$lte': first_ip}},
+                        {field + '.max_ip': {'$gte': last_ip}}
+                    ]}
+                ]},
+                {self._get_negate_key_name_for_field(field): True}
+            ]}
+        ]} # TODO: wildcard ips
+        return query
 
-        return list(objects_containing_addr)
-
-    def _translate_query_ip_to_object_ids(self, query_json):
+    def _parse_user_query_to_db_query(self, query_json):
         if type(query_json) == dict:
             key = next(iter(query_json))
-            if key.lower() in ['source', 'destination', 'src', 'dst']:
+            translated_key = self._translate_user_dest_src(key)
+            if translated_key in ['src_ip', 'dst_ip']:
                 if type(query_json[key]) == dict and next(iter(query_json[key])) == '$not':
-                    objects_containing_addr = self._get_network_objects_for_not_subnet(query_json[key]['$not'])
+                    raise NotImplementedError('Can\'t use not right now...')
                 elif type(query_json[key]) == str:
-                    objects_containing_addr = self._get_network_objects_for_subnet(query_json[key])
+                    return self._translate_searched_ip_to_query(query_json[key], translated_key)
                 else:
                     raise NotImplementedError('Comparison operation Not recognized on source/destination object')
-
-                if key.lower() in ['source', 'src']:
-                    return {'$or': [
-                        {'source': {'$in': objects_containing_addr}, 'source-negate': False},
-                        {'source': {'$nin': objects_containing_addr}, 'source-negate': True}
-                    ]}
-                else:
-                    return {'$or': [
-                        {'destination': {'$in': objects_containing_addr}, 'destination-negate': False},
-                        {'destination': {'$nin': objects_containing_addr}, 'destination-negate': True}
-                    ]}
-
             else:
-                debug = {key: self._translate_query_ip_to_object_ids(query_json[key])}
+                debug = {key: self._parse_user_query_to_db_query(query_json[key])}
                 return debug
         elif type(query_json) == list:
-            return [self._translate_query_ip_to_object_ids(elem) for elem in query_json]
+            return [self._parse_user_query_to_db_query(elem) for elem in query_json]
 
     def _get_rules_by_id(self, id_list):
         return list(self.policy_col.find({'id': {'$in': id_list}}))
+
+    def _resolve_ip_addresses_into_collection(self):
+        src_ranges, dst_ranges = [], []
+        for rule in self.policy_col.find({}):
+            sources = rule['source']
+            dests = rule['destination']
+            for src_id in sources:
+                list_of_min_max = self._resolve_src_id_to_ip(src_id)
+                src_ranges.extend(list_of_min_max)
+            for dst_id in dests:
+                list_of_min_max = self._resolve_src_id_to_ip(dst_id)
+                dst_ranges.extend(list_of_min_max)
+            self.policy_col.update(
+                {'id': rule['id']},
+                {'$set': {
+                    'src_ip': src_ranges,
+                    'dst_ip': dst_ranges
+                }}
+            )
+            src_ranges, dst_ranges = [], []
+
+    def _resolve_src_id_to_ip(self, id):
+        network_obj = self.address_objects_col.find_one({'id': id})
+        if not network_obj:
+            print('Object is not found in collection of network objects. could not recognize it\'s ip address')
+            return [{'id': id, 'ip': 'Could Not Recognize'}]
+        if network_obj['type'].lower() == 'ip_range':
+            return [{'min_ip': network_obj['min_ip'], 'max_ip': network_obj['max_ip']}]
+        elif network_obj['type'].lower() == 'wildcard':
+            return [{'wildcard_ip': network_obj['wildcard_ip'], 'wildcard_mask': network_obj['wildcard_mask']}]
+        elif network_obj['type'].lower() == 'group':
+            result = []
+            for elem in network_obj.get('members', []):
+                result.extend(self._resolve_src_id_to_ip(elem))
+            return result
+        else:
+            raise NotImplementedError('No such object network type: ' + network_obj['type'])
+
+    def _get_negate_key_name_for_field(self, field):
+        if field == 'src_ip':
+            return 'source-negate'
+        elif field == 'dst_ip':
+            return 'destination-negate'
+        else:
+            raise NotImplementedError('Unrecognized rule field: ' + field)
+
+    def _translate_user_dest_src(self, user_input):
+        if user_input.lower() in ['source', 'src']:
+            return 'src_ip'
+        elif user_input.lower() in ['destination', 'dst']:
+            return 'dst_ip'
+        return user_input

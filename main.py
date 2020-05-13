@@ -21,6 +21,9 @@ try:
 
 
     m_analyzer = analyzer("mongodb://localhost:27017/", "Checkpoint")
+
+    m_analyzer._resolve_ip_addresses_into_collection()
+
     root: Tk = tk.Tk()
     root.title('PyJSONViewer')
     root.geometry("800x800")
