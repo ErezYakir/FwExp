@@ -1,0 +1,15 @@
+* There is a problem in query searching:
+Let's say the firewall policy says:
+RULE ------ SOURCE ------ DESTINATION --- blablabla
+1           A               B, C
+
+if the user searches for: dst != B and dst != C
+the first part dst != B will return Rule 1 because of dst C
+the second part dst != C will return Rule 1 because of dst B
+overall, rule 1 will return to the user, which is not whats intended.
+
+It is very hard to fix this problem in code because of how the logic is built. however, i
+suggest to resolve that issue in this manner:
+for the user to query what he intended, he should do dst != (B,C)
+
+In that way, my code will be able to give that functionality to user with more ease.

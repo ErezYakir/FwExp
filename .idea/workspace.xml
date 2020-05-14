@@ -25,14 +25,8 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="Fixed mongo query by adding $elemMatch, also translated not subnet to (0.0.0.0-(subnet-1) or (subnet+1)-255.255.255.255)">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analyzer/analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/analyzer/analyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/firewall/checkpointfirewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/checkpointfirewall.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/firewall/firewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/firewall.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/firewall/fortigatefirewall.py" beforeDir="false" afterPath="$PROJECT_DIR$/firewall/fortigatefirewall.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gui/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/gui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    <list default="true" id="ff5f7cb0-169c-485c-9806-7053787cbf49" name="Default Changelist" comment="resolved service objects to port numbers in policy collection">
+      <change afterPath="$PROJECT_DIR$/analyzer/TODO-readme" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -280,7 +274,14 @@
       <option name="project" value="LOCAL" />
       <updated>1589444654582</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="resolved service objects to port numbers in policy collection">
+      <created>1589469460005</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1589469460005</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -331,17 +332,18 @@
     <MESSAGE value="Now gonna try to add columns of ip_min, ip_max in policy collection to solve all the problems of $not and stuff" />
     <MESSAGE value="Changed policy collection to store addresses and now query works with negate!!!" />
     <MESSAGE value="Fixed mongo query by adding $elemMatch, also translated not subnet to (0.0.0.0-(subnet-1) or (subnet+1)-255.255.255.255)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed mongo query by adding $elemMatch, also translated not subnet to (0.0.0.0-(subnet-1) or (subnet+1)-255.255.255.255)" />
+    <MESSAGE value="resolved service objects to port numbers in policy collection" />
+    <option name="LAST_COMMIT_MESSAGE" value="resolved service objects to port numbers in policy collection" />
   </component>
   <component name="WindowStateProjectService">
     <state x="586" y="258" key="#Inspections" timestamp="1589360295562">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="586" y="258" key="#Inspections/0.0.1920.1160@0.0.1920.1160" timestamp="1589360295562" />
-    <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1588579559109">
+    <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1589469752667">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1160@0.0.1920.1160" timestamp="1588579559109" />
+    <state x="714" y="382" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1160@0.0.1920.1160" timestamp="1589469752667" />
     <state x="1169" y="196" key="#xdebugger.evaluate" timestamp="1589357183610">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -382,10 +384,10 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="681" y="321" width="540" height="524" key="StructurePopup/0.0.1920.1160@0.0.1920.1160" timestamp="1588582033039" />
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1589444657146">
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1589469464068">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1589444657146" />
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160@0.0.1920.1160" timestamp="1589469464068" />
     <state width="968" height="588" key="XDebugger.FullValuePopup" timestamp="1589455247355">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
