@@ -146,7 +146,38 @@ class analyzer(object):
         var1 = self.policy_col.find(query_json_parsed).distinct('id')
         return self._get_rules_by_id(var1)
 
-    def _translate_searched_ip_to_query(self, subnet_addr, field):
+    def _translate_ip_range_to_query(self, first_ip, last_ip, field):
+        query = {'$or': [
+            {'$and': [{
+                field: {
+                    '$elemMatch': {
+                        '$and': [{
+                            'min_ip': {'$lte': last_ip}
+                        }, {
+                            'max_ip': {'$gte': first_ip}
+                        }]
+                    }
+                }},
+                {self._get_negate_key_name_for_field(field): False}
+            ]},
+            {'$and': [
+                {'$nor': [{
+                    field: {
+                        '$elemMatch': {
+                            '$and': [{
+                                'min_ip': {'$lte': first_ip}
+                            }, {
+                                'max_ip': {'$gte': last_ip}
+                            }]
+                        }
+                    }}
+                ]},
+                {self._get_negate_key_name_for_field(field): True}
+            ]}
+        ]}  # TODO: wildcard ips
+        return query
+
+    def _translate_searched_ip_to_query(self, subnet_addr, subnet_negated, field):
         # Algorithm: (All objects where min_ip <= subnet) intersection (All objects where max_ip >= subnet)
         if '/' in subnet_addr:
             ipnet = ipaddress.IPv4Network(subnet_addr, False)
@@ -157,23 +188,17 @@ class analyzer(object):
             first_ip = int(ipaddr)
             last_ip = int(ipaddr)
 
-        query = {'$or': [
-            {'$and': [
-                {field + '.min_ip': {'$lte': last_ip}},
-                {field + '.max_ip': {'$gte': first_ip}},
-                {self._get_negate_key_name_for_field(field): False}
-            ]},
-            {'$and': [
-                {'$nor': [
-                    {'$and': [
-                        {field + '.min_ip': {'$lte': first_ip}},
-                        {field + '.max_ip': {'$gte': last_ip}}
-                    ]}
-                ]},
-                {self._get_negate_key_name_for_field(field): True}
+        if subnet_negated:
+            return {'$or': [
+                self._translate_ip_range_to_query(0, first_ip-1, field),
+                self._translate_ip_range_to_query(last_ip+1, (2**32)-1, field)
             ]}
-        ]} # TODO: wildcard ips
-        return query
+        return self._translate_ip_range_to_query(first_ip, last_ip, field)
+       # if subnet_negated:
+            # not 1.1.1.0-1.1.1.254 is like 2.2.2.1-0.0.0.255 (wrapped around)
+       #     first_ip, last_ip = last_ip + 1, first_ip - 1
+       #     op = '$or'
+
 
     def _parse_user_query_to_db_query(self, query_json):
         if type(query_json) == dict:
@@ -181,9 +206,9 @@ class analyzer(object):
             translated_key = self._translate_user_dest_src(key)
             if translated_key in ['src_ip', 'dst_ip']:
                 if type(query_json[key]) == dict and next(iter(query_json[key])) == '$not':
-                    raise NotImplementedError('Can\'t use not right now...')
+                    return self._translate_searched_ip_to_query(query_json[key]['$not'], True, translated_key)
                 elif type(query_json[key]) == str:
-                    return self._translate_searched_ip_to_query(query_json[key], translated_key)
+                    return self._translate_searched_ip_to_query(query_json[key], False, translated_key)
                 else:
                     raise NotImplementedError('Comparison operation Not recognized on source/destination object')
             else:
