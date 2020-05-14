@@ -5,6 +5,7 @@ import ipaddress
 import json
 from .ssh_client import RemoteClient
 from globals import PROJECT_DIR
+from pathlib import Path
 
 
 def _parse_single_network_object(obj):
@@ -16,8 +17,8 @@ def _parse_single_network_object(obj):
         single_item['max_ip'] = int(ipaddress.IPv4Network('0.0.0.0/0', False)[-1])
     elif obj_type == 'group':
         single_item['type'] = 'GROUP'
-    elif obj_type == 'group-with-exclusion-!!need-to-implement!!':
-        single_item['type'] = 'GROUP'
+    elif obj_type == 'group-with-exclusion':
+        single_item['type'] = 'GROUP' # TODO: implement
     elif obj_type == 'wildcard':
         single_item['type'] = 'WILDCARD'
         single_item['wildcard_ip'] = obj['ipv4-address']
@@ -53,7 +54,12 @@ def _parse_single_service(obj):
             svc_item['udp-portrange'] = obj[key]
         elif key == 'port' and obj['type'] == 'service-tcp':
             svc_item['tcp-portrange'] = obj[key]
-        elif key in ['interface-uuid', 'type', 'program-number', 'icmp-type', 'icmp-code', 'members']:
+        elif key == 'type':
+            if obj['type'] in ['service-tcp', 'service-udp']:
+                svc_item['type'] = 'service-tcp-udp'
+            else:
+                svc_item['type'] = obj['type']
+        elif key in ['interface-uuid', 'name', 'program-number', 'icmp-type', 'icmp-code', 'members']:
             svc_item[key] = obj[key]
         else:
             svc_item['extra_info'][key] = obj[key]
@@ -102,6 +108,7 @@ class CheckpointFirewall(Firewall):
         self.config_path = PROJECT_DIR + "/checkpoint_config_files/"
         self.checkpoint_rules = {}
         self.checkpoint_objects = {}
+        Path(self.config_path).mkdir(parents=True, exist_ok=True)
 
     def fetch(self, fetch_remotely=True):
         if fetch_remotely:

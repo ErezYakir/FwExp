@@ -14,15 +14,15 @@ try:
     f.fetch(fetch_remotely=False)
     f.parseToDb()
 
-    #f2 = fortigatefirewall.FortigateFirewall("52.161.105.178", "yakir", "Aa123456123456", "mongodb://localhost:27017/",
-    #                                          "Fortigate")
-    #f2.fetch()
-    #f2.parseToDb()
+    f2 = fortigatefirewall.FortigateFirewall("13.78.232.209", "yakir", "Aa123456123456", "mongodb://localhost:27017/",
+                                              "Fortigate")
+    f2.fetch(fetch_remotely=False)
+    f2.parseToDb()
 
 
-    m_analyzer = analyzer("mongodb://localhost:27017/", "Checkpoint")
+    m_analyzer = analyzer("mongodb://localhost:27017/", "Fortigate")
 
-    m_analyzer._resolve_ip_addresses_into_collection()
+    #m_analyzer._resolve_ip_addresses_into_collection()
 
     root: Tk = tk.Tk()
     root.title('PyJSONViewer')

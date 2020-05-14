@@ -1,4 +1,5 @@
 import argparse
+import ipaddress
 import json
 import os
 import tkinter as tk
@@ -95,11 +96,45 @@ class JSONTreeFrame(ttk.Frame):
         self.query_box = tk.Entry(self.query_frame)
         self.query_box.pack(fill='x')
 
+    def _beautify_results(self, json_data):
+        results = []
+        for item in json_data:
+            new_item = {'name': item['name'], 'dst-ip': [], 'src-ip': []}
+            dst_ip_list = item['dst_ip']
+            src_ip_list = item['src_ip']
+            for addr in dst_ip_list:
+                single_addr = {}
+                if addr.get('min_ip'):
+                    single_addr['start'] = str(ipaddress.IPv4Address(addr['min_ip']))
+                if addr.get('max_ip'):
+                    single_addr['end'] = str(ipaddress.IPv4Address(addr['max_ip']))
+                if addr.get('wildcard_ip'):
+                    single_addr['wildcard_ip'] = str(ipaddress.IPv4Address(addr['wildcard_ip']))
+                if addr.get('wildcard_mask'):
+                    single_addr['wildcard_mask'] = str(ipaddress.IPv4Address(addr['wildcard_mask']))
+                single_addr['name'] = addr['name']
+                new_item['dst-ip'].append(single_addr)
+            for addr in src_ip_list:
+                single_addr = {}
+                if addr.get('min_ip'):
+                    single_addr['start'] = str(ipaddress.IPv4Address(addr['min_ip']))
+                if addr.get('max_ip'):
+                    single_addr['end'] = str(ipaddress.IPv4Address(addr['max_ip']))
+                if addr.get('wildcard_ip'):
+                    single_addr['wildcard_ip'] = str(ipaddress.IPv4Address(addr['wildcard_ip']))
+                if addr.get('wildcard_mask'):
+                    single_addr['wildcard_mask'] = str(ipaddress.IPv4Address(addr['wildcard_mask']))
+                single_addr['name'] = addr['name']
+                new_item['src-ip'].append(single_addr)
+            results.append(new_item)
+        return results
+
     def search_query_action(self):
         search_in = self.document.get() == 'Last Result'
         #choice = self.analysis_func.get()
         query = self.query_box.get()
         result = self.m_analyzer.query(query)
+        result = self._beautify_results(result)
         self.set_table_data_from_json(result)
         """
         if choice == 'Search By Name':
@@ -125,7 +160,10 @@ class JSONTreeFrame(ttk.Frame):
 
         if type(value) is not dict:
             if type(value) is list:
-                value = value[0:MAX_N_SHOW_ITEM]
+                for item in value:
+                    name = item.pop('name')
+                    self.insert_node(node, name, item)
+                return
             self.tree.insert(node, 'end', text=value, open=False)
         else:
             for (key, value) in value.items():

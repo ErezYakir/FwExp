@@ -10,8 +10,9 @@ class analyzer(object):
         self.conn = pymongo.MongoClient(db_path)
         self.cursor = self.conn[db_name]
         self.policy_col = self.cursor['policy']
-        self.address_objects_col = self.cursor['addresses']
-        self.service_objects_col = self.cursor['services']
+        self.address_objects_col = self.cursor['network_objects']
+        self.service_objects_col = self.cursor['service_object']
+        self.misc_objects_col = self.cursor['misc']
         self.last_result_col = self.cursor['last_result']
 
     # Not implemented yet
@@ -143,8 +144,9 @@ class analyzer(object):
     def query(self, query_str):
         query_json = pql.find(query_str)  # Here we can also verify that the input types are correct #TODO
         query_json_parsed = self._parse_user_query_to_db_query(query_json)
-        var1 = self.policy_col.find(query_json_parsed).distinct('id')
-        return self._get_rules_by_id(var1)
+        var1 = self.policy_col.find(query_json_parsed, {'_id':0, 'dst_ip':1, 'src_ip':1, 'name':1, 'service':1})
+        #return self._get_rules_by_id(var1)
+        return list(var1)
 
     def _translate_ip_range_to_query(self, first_ip, last_ip, field):
         query = {'$or': [
@@ -206,6 +208,7 @@ class analyzer(object):
             translated_key = self._translate_user_dest_src(key)
             if translated_key in ['src_ip', 'dst_ip']:
                 if type(query_json[key]) == dict and next(iter(query_json[key])) == '$not':
+                    #return {'$not': [self._translate_searched_ip_to_query(query_json[key]['$not'], False, translated_key)]}
                     return self._translate_searched_ip_to_query(query_json[key]['$not'], True, translated_key)
                 elif type(query_json[key]) == str:
                     return self._translate_searched_ip_to_query(query_json[key], False, translated_key)
@@ -219,43 +222,6 @@ class analyzer(object):
 
     def _get_rules_by_id(self, id_list):
         return list(self.policy_col.find({'id': {'$in': id_list}}))
-
-    def _resolve_ip_addresses_into_collection(self):
-        src_ranges, dst_ranges = [], []
-        for rule in self.policy_col.find({}):
-            sources = rule['source']
-            dests = rule['destination']
-            for src_id in sources:
-                list_of_min_max = self._resolve_src_id_to_ip(src_id)
-                src_ranges.extend(list_of_min_max)
-            for dst_id in dests:
-                list_of_min_max = self._resolve_src_id_to_ip(dst_id)
-                dst_ranges.extend(list_of_min_max)
-            self.policy_col.update(
-                {'id': rule['id']},
-                {'$set': {
-                    'src_ip': src_ranges,
-                    'dst_ip': dst_ranges
-                }}
-            )
-            src_ranges, dst_ranges = [], []
-
-    def _resolve_src_id_to_ip(self, id):
-        network_obj = self.address_objects_col.find_one({'id': id})
-        if not network_obj:
-            print('Object is not found in collection of network objects. could not recognize it\'s ip address')
-            return [{'id': id, 'ip': 'Could Not Recognize'}]
-        if network_obj['type'].lower() == 'ip_range':
-            return [{'min_ip': network_obj['min_ip'], 'max_ip': network_obj['max_ip']}]
-        elif network_obj['type'].lower() == 'wildcard':
-            return [{'wildcard_ip': network_obj['wildcard_ip'], 'wildcard_mask': network_obj['wildcard_mask']}]
-        elif network_obj['type'].lower() == 'group':
-            result = []
-            for elem in network_obj.get('members', []):
-                result.extend(self._resolve_src_id_to_ip(elem))
-            return result
-        else:
-            raise NotImplementedError('No such object network type: ' + network_obj['type'])
 
     def _get_negate_key_name_for_field(self, field):
         if field == 'src_ip':

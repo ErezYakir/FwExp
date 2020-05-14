@@ -4,19 +4,20 @@ import re
 from .firewall import Firewall
 import ipaddress
 from globals import PROJECT_DIR
-
+from pathlib import Path
 
 class FortigateFirewall(Firewall):
 
     def __init__(self, ip, user, pwd, db_path, db_name="Firewall_info"):
         super().__init__(ip, user, pwd, db_path, db_name=db_name)
-        self.config_path = PROJECT_DIR + "/checkpoint_config_files/"
+        self.config_path = PROJECT_DIR + "\\fortigate_config_files\\"
         self.backup_config = ''
         self.p_exiting_block = re.compile('^end$', re.IGNORECASE)
         self.p_next = re.compile('^next$', re.IGNORECASE)
         self.p_name = re.compile('^\s*edit\s+"(?P<name>.*)"$', re.IGNORECASE)
         self.p_set = re.compile('^\s*set\s+(?P<key>\S+)\s+(?P<value>.*)$', re.IGNORECASE)
         self.p_policy_number = re.compile('^\s*edit\s+(?P<policy_number>\d+)', re.IGNORECASE)
+        Path(self.config_path).mkdir(parents=True, exist_ok=True)
 
     def fetch(self, fetch_remotely=True):
         if fetch_remotely:
@@ -42,7 +43,9 @@ class FortigateFirewall(Firewall):
                                            self.backup_config, re.IGNORECASE).group(1)
         self.services_content = re.search('config\sfirewall\sservice\scustom([\s\S]+?)\nend',
                                            self.backup_config, re.IGNORECASE).group(1)
-        self.interface_content = re.search('config\ssystem\sinterfaces([\s\S]+?)\nend',
+        self.services_groups_content = re.search('config\sfirewall\sservice\sgroup([\s\S]+?)\nend',
+                                          self.backup_config, re.IGNORECASE).group(1)
+        self.interface_content = re.search('config\ssystem\sinterface([\s\S]+?)\nend',
                                           self.backup_config, re.IGNORECASE).group(1)
         self.schedule_content = re.search('config\sfirewall\sschedule\srecurring([\s\S]+?)\nend',
                                            self.backup_config, re.IGNORECASE).group(1)
@@ -135,6 +138,9 @@ class FortigateFirewall(Firewall):
             if self.p_next.search(line):
                 policy_elem['source'] = policy_elem.pop('srcaddr')
                 policy_elem['destination'] = policy_elem.pop('dstaddr')
+                policy_elem['source-negate'] = False
+                policy_elem['destination-negate'] = False
+                policy_elem['service-negate'] = False
                 policy_list.append(policy_elem)
                 policy_elem = {'extra_info': {}}
 
@@ -190,6 +196,7 @@ class FortigateFirewall(Firewall):
                 service_name = self.p_name.search(line).group('name')
                 service_elem['name'] = service_name
                 service_elem['id'] = service_name
+                service_elem['type'] = 'service-tcp-udp'
             if self.p_set.search(line):
                 key = self.p_set.search(line).group('key')
                 value = self.p_set.search(line).group('value').strip()
@@ -220,6 +227,8 @@ class FortigateFirewall(Firewall):
                         ports.append(parsed_port_range)
                     value = ports
                     service_elem[key] = value
+                elif key == 'protocol':
+                    service_elem['type'] = value
                 else:
                     service_elem['extra_info'][key] = value
 
@@ -227,6 +236,7 @@ class FortigateFirewall(Firewall):
                 service_list.append(service_elem)
                 service_elem = {'extra_info': {}}
 
+        service_list.extend(self._get_service_groups())
         return service_list
 
     def _parse_misc(self):
@@ -256,7 +266,29 @@ class FortigateFirewall(Firewall):
         return misc_list
 
     def _get_service_groups(self):
-        pass
+        service_grp_elem = {'extra_info': {}}
+        service_grp_list = []
+        for line in self.services_groups_content.splitlines():
+            line = line.lstrip().rstrip().strip()
+            if self.p_name.search(line):
+                service_name = self.p_name.search(line).group('name')
+                service_grp_elem['name'] = service_name
+                service_grp_elem['id'] = service_name
+                service_grp_elem['type'] = 'GROUP'
+            if self.p_set.search(line):
+                key = self.p_set.search(line).group('key')
+                value = self.p_set.search(line).group('value').strip()
+
+                if key in ['member']:
+                    service_grp_elem['members'] = shlex.split(value)
+                else:
+                    service_grp_elem['extra_info'][key] = value
+
+            if self.p_next.search(line):
+                service_grp_list.append(service_grp_elem)
+                service_grp_elem = {'extra_info': {}}
+
+        return service_grp_list
 
     def _get_obj_id_by_name(self, name):
         matches = re.search("edit\s\"{}\"[\s\S]+?set\suuid\s(.*)".format(name), self.backup_config)
